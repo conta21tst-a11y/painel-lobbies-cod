@@ -129,6 +129,7 @@
 
     .btn-join { background-color: #2ecc71; color: #fff; }
     .btn-leave { background-color: #e74c3c; color: #fff; }
+    .btn-secondary { background-color: #3498db; color: #fff; }
 
     .user-status {
       background-color: #29292e;
@@ -297,6 +298,17 @@
       padding: 12px 0;
     }
 
+    .modo-switch-box {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      text-align: left;
+    }
+
+    .modo-switch-box label {
+      margin-bottom: 8px;
+    }
+
     @media (max-width: 768px) {
       .main-layout {
         flex-direction: column;
@@ -320,7 +332,24 @@
       <div id="userLoggedStatus" class="user-status" style="display: none;">
         ID Ativo: <strong id="loggedName" style="color: #f1c40f;">-</strong><br />
         Plataforma: <span id="loggedPlat">-</span><br />
-        Modo: <span id="loggedModo">-</span>
+        Modo atual: <span id="loggedModo">-</span>
+
+        <div id="trocarModoArea" class="modo-switch-box" style="display: none;">
+          <label for="modoDepoisDeSair">Escolha outro modo</label>
+          <select id="modoDepoisDeSair">
+            <option value="" selected disabled>Selecione o modo...</option>
+            <option value="Battle Royale">Battle Royale</option>
+            <option value="Ressurgência">Ressurgência</option>
+            <option value="Casual Battle Royale">Casual Battle Royale</option>
+            <option value="Casual Ressurgência">Casual Ressurgência</option>
+            <option value="Ranked Play">Ranked Play</option>
+            <option value="Multiplayer">Multiplayer</option>
+          </select>
+          <button onclick="confirmarNovoModo()" class="btn-action btn-secondary">
+            BUSCAR OUTRO MODO
+          </button>
+        </div>
+
         <button onclick="fazerLogout()" class="btn-action btn-leave" style="margin-top: 10px; padding: 6px;">
           Sair desta Conta
         </button>
@@ -456,17 +485,19 @@
         if (!bruto) return;
 
         const dados = JSON.parse(bruto);
-        if (!dados || !dados.id || !dados.plataforma || !dados.tipoJogo) return;
+        if (!dados || !dados.id || !dados.plataforma) return;
 
         jogadorAtual = {
           id: normalizarTexto(dados.id),
           plataforma: normalizarTexto(dados.plataforma),
-          tipoJogo: normalizarTexto(dados.tipoJogo)
+          tipoJogo: normalizarTexto(dados.tipoJogo || "")
         };
 
         document.getElementById("activisionId").value = jogadorAtual.id;
         document.getElementById("plataforma").value = jogadorAtual.plataforma;
-        document.getElementById("tipoJogo").value = jogadorAtual.tipoJogo;
+        if (jogadorAtual.tipoJogo) {
+          document.getElementById("tipoJogo").value = jogadorAtual.tipoJogo;
+        }
       } catch (e) {
         console.warn("Não foi possível restaurar sessão local.", e);
       }
@@ -518,26 +549,15 @@
           ],
           max: 4
         }))
+        .filter(lobby => contarJogadoresValidos(lobby.players) > 0)
         .filter(lobby => {
-          const total = contarJogadoresValidos(lobby.players);
-          return total > 0;
+          if (!jogadorAtual || !jogadorAtual.tipoJogo) return true;
+
+          const lobbyDoJogador = lobby.players.some(p => idsIguais(p.nome, jogadorAtual.id));
+          if (lobbyDoJogador) return true;
+
+          return normalizarTexto(lobby.modo) === normalizarTexto(jogadorAtual.tipoJogo);
         });
-    }
-
-    function atualizarStatusUsuario() {
-      const statusBox = document.getElementById("userLoggedStatus");
-      const cadastroArea = document.getElementById("cadastroArea");
-
-      if (jogadorAtual) {
-        statusBox.style.display = "block";
-        cadastroArea.style.display = "none";
-        document.getElementById("loggedName").textContent = jogadorAtual.id;
-        document.getElementById("loggedPlat").textContent = jogadorAtual.plataforma;
-        document.getElementById("loggedModo").textContent = jogadorAtual.tipoJogo;
-      } else {
-        statusBox.style.display = "none";
-        cadastroArea.style.display = "block";
-      }
     }
 
     function encontrarLobbyDoJogador() {
@@ -552,11 +572,45 @@
       const lider = obterLider(lobby);
       const restante = obterTempoRestante(lobby);
 
-      return total > 0 && total < 4 && isFilled(lider) && lobby.status !== "Fechado" && (restante === null || restante > 0);
+      return total > 0 &&
+             total < 4 &&
+             isFilled(lider) &&
+             lobby.status !== "Fechado" &&
+             (restante === null || restante > 0);
     }
 
     function temLobbyDisponivelParaEntrar() {
       return bancoLobbies.some(lobby => lobbyValidoParaEntrar(lobby));
+    }
+
+    function atualizarStatusUsuario() {
+      const statusBox = document.getElementById("userLoggedStatus");
+      const cadastroArea = document.getElementById("cadastroArea");
+      const trocarModoArea = document.getElementById("trocarModoArea");
+      const lobbyAtual = encontrarLobbyDoJogador();
+
+      if (jogadorAtual) {
+        statusBox.style.display = "block";
+        cadastroArea.style.display = "none";
+
+        document.getElementById("loggedName").textContent = jogadorAtual.id;
+        document.getElementById("loggedPlat").textContent = jogadorAtual.plataforma;
+        document.getElementById("loggedModo").textContent = jogadorAtual.tipoJogo || "Nenhum modo selecionado";
+
+        trocarModoArea.style.display = lobbyAtual ? "none" : "block";
+
+        const seletor = document.getElementById("modoDepoisDeSair");
+        if (seletor) {
+          if (jogadorAtual.tipoJogo) {
+            seletor.value = jogadorAtual.tipoJogo;
+          } else {
+            seletor.selectedIndex = 0;
+          }
+        }
+      } else {
+        statusBox.style.display = "none";
+        cadastroArea.style.display = "block";
+      }
     }
 
     async function carregarDadosPlanilha(exibirErro = true) {
@@ -639,6 +693,11 @@
           return;
         }
 
+        if (!jogadorAtual.tipoJogo) {
+          mostrarMensagem("Escolha um modo antes de criar um lobby.", "error");
+          return;
+        }
+
         acaoEmAndamento = true;
         renderizarLobbies();
         mostrarMensagem("Criando seu lobby...", "info");
@@ -656,7 +715,7 @@
         }
 
         await carregarDadosPlanilha(false);
-        mostrarMensagem("Novo lobby criado. Você virou o líder da formação.", "success");
+        mostrarMensagem(`Novo lobby criado em ${jogadorAtual.tipoJogo}. Você virou o líder da formação.`, "success");
       } catch (erro) {
         console.error("Erro ao criar lobby:", erro);
         mostrarMensagem(`Erro ao criar lobby: ${erro.message}`, "error");
@@ -682,7 +741,7 @@
           </div>
           <div class="lobby-id">Nenhum lobby em formação disponível</div>
           <div class="host-box">
-            Você pode aguardar outro jogador criar um lobby ou criar agora o seu próprio lobby e virar o líder da formação.
+            Você pode aguardar outro jogador criar um lobby ou criar agora o seu próprio lobby em <strong>${jogadorAtual.tipoJogo || "outro modo"}</strong> e virar o líder da formação.
           </div>
           <button class="btn-action btn-join" ${acaoEmAndamento ? "disabled" : ""} onclick="criarNovoLobbyComoLider()">
             ${acaoEmAndamento ? "CRIANDO..." : "CRIAR NOVO LOBBY"}
@@ -811,8 +870,38 @@
       };
 
       salvarSessaoJogador();
+      carregarDadosPlanilha(false);
       renderizarLobbies();
       mostrarMensagem("Cadastro realizado. Agora você pode entrar em uma formação existente ou criar a sua.", "success");
+    }
+
+    function confirmarNovoModo() {
+      if (!jogadorAtual) {
+        mostrarMensagem("Nenhum usuário está conectado.", "error");
+        return;
+      }
+
+      if (encontrarLobbyDoJogador()) {
+        mostrarMensagem("Você precisa sair do lobby atual primeiro.", "error");
+        return;
+      }
+
+      const novoModo = normalizarTexto(document.getElementById("modoDepoisDeSair").value);
+
+      if (!novoModo) {
+        mostrarMensagem("Escolha um modo de jogo.", "error");
+        return;
+      }
+
+      jogadorAtual.tipoJogo = novoModo;
+      salvarSessaoJogador();
+
+      document.getElementById("tipoJogo").value = novoModo;
+      document.getElementById("loggedModo").textContent = novoModo;
+
+      carregarDadosPlanilha(false);
+      renderizarLobbies();
+      mostrarMensagem(`Modo alterado para ${novoModo}. Agora você pode entrar em outro lobby ou criar o seu como líder.`, "success");
     }
 
     function fazerLogout() {
@@ -828,6 +917,7 @@
       document.getElementById("activisionId").value = "";
       document.getElementById("plataforma").selectedIndex = 0;
       document.getElementById("tipoJogo").selectedIndex = 0;
+      document.getElementById("modoDepoisDeSair").selectedIndex = 0;
 
       renderizarLobbies();
       mostrarMensagem("Você saiu da conta atual.", "info");
@@ -916,7 +1006,16 @@
         }
 
         await carregarDadosPlanilha(false);
-        mostrarMensagem(resultado.message || "Você saiu do lobby com sucesso.", "info");
+
+        const seletorModo = document.getElementById("modoDepoisDeSair");
+        if (seletorModo && jogadorAtual?.tipoJogo) {
+          seletorModo.value = jogadorAtual.tipoJogo;
+        }
+
+        mostrarMensagem(
+          "Você saiu do lobby. Agora pode escolher outro modo, entrar em outro lobby ou criar o seu como líder.",
+          "success"
+        );
       } catch (erro) {
         console.error("Erro ao sair do lobby:", erro);
         mostrarMensagem("Não foi possível sair do lobby.", "error");
