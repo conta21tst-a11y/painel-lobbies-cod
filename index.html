@@ -319,7 +319,8 @@
 
       <div id="userLoggedStatus" class="user-status" style="display: none;">
         ID Ativo: <strong id="loggedName" style="color: #f1c40f;">-</strong><br />
-        Plataforma: <span id="loggedPlat">-</span>
+        Plataforma: <span id="loggedPlat">-</span><br />
+        Modo: <span id="loggedModo">-</span>
         <button onclick="fazerLogout()" class="btn-action btn-leave" style="margin-top: 10px; padding: 6px;">
           Sair desta Conta
         </button>
@@ -376,6 +377,7 @@
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbw9rB_3YUkOpdt_X3lZ_Qq8TlZ_NnsxiT9ynr6nOs4jpDJn_luEBrN1KeZqSvOGLuAf/exec";
     const REFRESH_MS = 3000;
+    const STORAGE_KEY = "codLobbyJogadorAtual";
 
     let bancoLobbies = [];
     let jogadorAtual = null;
@@ -434,6 +436,40 @@
       const expiresAt = Number(lobby.expiresAt || 0);
       if (!expiresAt) return null;
       return expiresAt - Date.now();
+    }
+
+    function salvarSessaoJogador() {
+      try {
+        if (!jogadorAtual) {
+          localStorage.removeItem(STORAGE_KEY);
+          return;
+        }
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(jogadorAtual));
+      } catch (e) {
+        console.warn("Não foi possível salvar sessão local.", e);
+      }
+    }
+
+    function restaurarSessaoJogador() {
+      try {
+        const bruto = localStorage.getItem(STORAGE_KEY);
+        if (!bruto) return;
+
+        const dados = JSON.parse(bruto);
+        if (!dados || !dados.id || !dados.plataforma || !dados.tipoJogo) return;
+
+        jogadorAtual = {
+          id: normalizarTexto(dados.id),
+          plataforma: normalizarTexto(dados.plataforma),
+          tipoJogo: normalizarTexto(dados.tipoJogo)
+        };
+
+        document.getElementById("activisionId").value = jogadorAtual.id;
+        document.getElementById("plataforma").value = jogadorAtual.plataforma;
+        document.getElementById("tipoJogo").value = jogadorAtual.tipoJogo;
+      } catch (e) {
+        console.warn("Não foi possível restaurar sessão local.", e);
+      }
     }
 
     async function chamarAPI(payload = null) {
@@ -497,6 +533,7 @@
         cadastroArea.style.display = "none";
         document.getElementById("loggedName").textContent = jogadorAtual.id;
         document.getElementById("loggedPlat").textContent = jogadorAtual.plataforma;
+        document.getElementById("loggedModo").textContent = jogadorAtual.tipoJogo;
       } else {
         statusBox.style.display = "none";
         cadastroArea.style.display = "block";
@@ -522,18 +559,15 @@
       return bancoLobbies.some(lobby => lobbyValidoParaEntrar(lobby));
     }
 
-    function obterProximoLobbyIdVisual() {
-      if (!bancoLobbies.length) return 1;
-      return Math.max(...bancoLobbies.map(l => Number(l.idLobby) || 0)) + 1;
-    }
-
-    async function carregarDadosPlanilha() {
+    async function carregarDadosPlanilha(exibirErro = true) {
       try {
         bancoLobbies = await fetchLobbies();
         renderizarLobbies();
       } catch (erro) {
         console.error("Erro ao puxar dados:", erro);
-        mostrarMensagem("Não foi possível carregar os lobbies.", "error");
+        if (exibirErro) {
+          mostrarMensagem("Não foi possível carregar os lobbies.", "error");
+        }
         document.getElementById("listaEmFormacao").innerHTML =
           '<p class="empty-message">Erro ao carregar lobbies.</p>';
         document.getElementById("listaFechados").innerHTML = "";
@@ -621,7 +655,7 @@
           return;
         }
 
-        await carregarDadosPlanilha();
+        await carregarDadosPlanilha(false);
         mostrarMensagem("Novo lobby criado. Você virou o líder da formação.", "success");
       } catch (erro) {
         console.error("Erro ao criar lobby:", erro);
@@ -776,6 +810,7 @@
         tipoJogo
       };
 
+      salvarSessaoJogador();
       renderizarLobbies();
       mostrarMensagem("Cadastro realizado. Agora você pode entrar em uma formação existente ou criar a sua.", "success");
     }
@@ -788,9 +823,12 @@
       }
 
       jogadorAtual = null;
+      salvarSessaoJogador();
+
       document.getElementById("activisionId").value = "";
       document.getElementById("plataforma").selectedIndex = 0;
       document.getElementById("tipoJogo").selectedIndex = 0;
+
       renderizarLobbies();
       mostrarMensagem("Você saiu da conta atual.", "info");
     }
@@ -813,7 +851,7 @@
         const lobby = bancoLobbies[index];
         if (!lobby || !lobbyValidoParaEntrar(lobby)) {
           mostrarMensagem("Esse lobby não está disponível para entrada.", "error");
-          await carregarDadosPlanilha();
+          await carregarDadosPlanilha(false);
           return;
         }
 
@@ -830,16 +868,17 @@
 
         if (!resultado.ok) {
           mostrarMensagem(resultado.message || "Não foi possível entrar no lobby.", "error");
-          await carregarDadosPlanilha();
+          await carregarDadosPlanilha(false);
           return;
         }
 
-        await carregarDadosPlanilha();
+        salvarSessaoJogador();
+        await carregarDadosPlanilha(false);
         mostrarMensagem(resultado.message || "Você entrou no lobby com sucesso.", "success");
       } catch (erro) {
         console.error("Erro ao entrar:", erro);
         mostrarMensagem(`Erro ao entrar: ${erro.message}`, "error");
-        await carregarDadosPlanilha();
+        await carregarDadosPlanilha(false);
       } finally {
         acaoEmAndamento = false;
         renderizarLobbies();
@@ -872,30 +911,36 @@
 
         if (!resultado.ok) {
           mostrarMensagem(resultado.message || "Não foi possível sair do lobby.", "error");
-          await carregarDadosPlanilha();
+          await carregarDadosPlanilha(false);
           return;
         }
 
-        await carregarDadosPlanilha();
+        await carregarDadosPlanilha(false);
         mostrarMensagem(resultado.message || "Você saiu do lobby com sucesso.", "info");
       } catch (erro) {
         console.error("Erro ao sair do lobby:", erro);
         mostrarMensagem("Não foi possível sair do lobby.", "error");
-        await carregarDadosPlanilha();
+        await carregarDadosPlanilha(false);
       } finally {
         acaoEmAndamento = false;
         renderizarLobbies();
       }
     }
 
-    carregarDadosPlanilha();
+    async function iniciarAplicacao() {
+      restaurarSessaoJogador();
+      atualizarStatusUsuario();
+      await carregarDadosPlanilha(false);
+    }
+
+    iniciarAplicacao();
 
     setInterval(() => {
       renderizarLobbies();
     }, 1000);
 
     setInterval(async () => {
-      await carregarDadosPlanilha();
+      await carregarDadosPlanilha(false);
     }, REFRESH_MS);
   </script>
 </body>
