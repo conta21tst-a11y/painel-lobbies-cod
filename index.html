@@ -337,7 +337,7 @@
         <div id="trocarModoArea" class="modo-switch-box" style="display: none;">
           <label for="modoDepoisDeSair">Escolha outro modo</label>
           <select id="modoDepoisDeSair">
-            <option value="" selected disabled>Selecione o modo...</option>
+            <option value="" disabled>Selecione o modo...</option>
             <option value="Battle Royale">Battle Royale</option>
             <option value="Ressurgência">Ressurgência</option>
             <option value="Casual Battle Royale">Casual Battle Royale</option>
@@ -598,15 +598,6 @@
         document.getElementById("loggedModo").textContent = jogadorAtual.tipoJogo || "Nenhum modo selecionado";
 
         trocarModoArea.style.display = lobbyAtual ? "none" : "block";
-
-        const seletor = document.getElementById("modoDepoisDeSair");
-        if (seletor) {
-          if (jogadorAtual.tipoJogo) {
-            seletor.value = jogadorAtual.tipoJogo;
-          } else {
-            seletor.selectedIndex = 0;
-          }
-        }
       } else {
         statusBox.style.display = "none";
         cadastroArea.style.display = "block";
@@ -870,6 +861,7 @@
       };
 
       salvarSessaoJogador();
+      document.getElementById("loggedModo").textContent = tipoJogo;
       carregarDadosPlanilha(false);
       renderizarLobbies();
       mostrarMensagem("Cadastro realizado. Agora você pode entrar em uma formação existente ou criar a sua.", "success");
@@ -886,7 +878,8 @@
         return;
       }
 
-      const novoModo = normalizarTexto(document.getElementById("modoDepoisDeSair").value);
+      const seletor = document.getElementById("modoDepoisDeSair");
+      const novoModo = normalizarTexto(seletor.value);
 
       if (!novoModo) {
         mostrarMensagem("Escolha um modo de jogo.", "error");
@@ -1006,12 +999,6 @@
         }
 
         await carregarDadosPlanilha(false);
-
-        const seletorModo = document.getElementById("modoDepoisDeSair");
-        if (seletorModo && jogadorAtual?.tipoJogo) {
-          seletorModo.value = jogadorAtual.tipoJogo;
-        }
-
         mostrarMensagem(
           "Você saiu do lobby. Agora pode escolher outro modo, entrar em outro lobby ou criar o seu como líder.",
           "success"
