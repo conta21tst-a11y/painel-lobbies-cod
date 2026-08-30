@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Painel de Lobbies - CoD</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #0f0f12;
+      color: #e1e1e6;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .main-layout {
+      display: flex;
+      gap: 20px;
+      width: 100%;
+      max-width: 1400px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .card {
+      background-color: #191920;
+      padding: 25px;
+      border-radius: 8px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+      flex: 1;
+      min-width: 320px;
+      max-width: 430px;
+      height: fit-content;
+    }
+
+    .card-cadastro { border-top: 5px solid #f1c40f; }
+    .card-em-formacao { border-top: 5px solid #2ecc71; }
+    .card-fechados { border-top: 5px solid #e74c3c; }
+
+    h1, h2 {
+      text-align: center;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-size: 20px;
+    }
+
+    .card-cadastro h1 { color: #f1c40f; }
+    .card-em-formacao h2 { color: #2ecc71; }
+    .card-fechados h2 { color: #e74c3c; }
+
+    p.subtitle {
+      text-align: center;
+      color: #8f8f9d;
+      font-size: 13px;
+      margin-bottom: 25px;
+    }
+
+    .form-group { margin-bottom: 18px; }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #c4c4cc;
+    }
+
+    input[type="text"], select {
+      width: 100%;
+      padding: 12px;
+      background-color: #0f0f12;
+      border: 2px solid #29292e;
+      border-radius: 4px;
+      color: #fff;
+      font-size: 15px;
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]:focus, select:focus {
+      outline: none;
+      border-color: #f1c40f;
+    }
+
+    .btn-principal {
+      width: 100%;
+      padding: 12px;
+      background-color: #f1c40f;
+      color: #0f0f12;
+      border: none;
+      border-radius: 4px;
+      font-size: 15px;
+      font-weight: bold;
+      text-transform: uppercase;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .btn-principal:hover { opacity: 0.9; }
+
+    .btn-action {
+      width: 100%;
+      padding: 10px;
+      font-size: 13px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    .btn-action:disabled,
+    .btn-principal:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-join { background-color: #2ecc71; color: #fff; }
+    .btn-leave { background-color: #e74c3c; color: #fff; }
+
+    .user-status {
+      background-color: #29292e;
+      padding: 12px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      font-size: 13px;
+      text-align: center;
+      border-left: 4px solid #f1c40f;
+    }
+
+    .message-box {
+      width: 100%;
+      max-width: 1400px;
+      margin-top: 10px;
+      margin-bottom: 10px;
+      padding: 12px 16px;
+      border-radius: 6px;
+      font-size: 14px;
+      display: none;
+    }
+
+    .message-success {
+      background: rgba(46, 204, 113, 0.12);
+      color: #7ff0ab;
+      border: 1px solid rgba(46, 204, 113, 0.4);
+    }
+
+    .message-error {
+      background: rgba(231, 76, 60, 0.12);
+      color: #ff9f96;
+      border: 1px solid rgba(231, 76, 60, 0.4);
+    }
+
+    .message-info {
+      background: rgba(241, 196, 15, 0.12);
+      color: #f6da6a;
+      border: 1px solid rgba(241, 196, 15, 0.4);
+    }
+
+    .squad-card {
+      background-color: #0f0f12;
+      border: 1px solid #29292e;
+      border-radius: 6px;
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+
+    .squad-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #29292e;
+      padding-bottom: 8px;
+      margin-bottom: 10px;
+      gap: 10px;
+    }
+
+    .squad-mode {
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .card-em-formacao .squad-mode { color: #2ecc71; }
+    .card-fechados .squad-mode { color: #e74c3c; }
+
+    .squad-slots,
+    .timer-badge {
+      background-color: #29292e;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: bold;
+      color: #fff;
+      white-space: nowrap;
+    }
+
+    .timer-wrap {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+
+    .timer-badge {
+      background: rgba(241, 196, 15, 0.16);
+      color: #f6da6a;
+      border: 1px solid rgba(241, 196, 15, 0.25);
+    }
+
+    .lobby-id {
+      color: #8f8f9d;
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+
+    .player-slot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      font-size: 13px;
+      color: #c4c4cc;
+      border-bottom: 1px dashed rgba(255,255,255,0.05);
+      gap: 10px;
+    }
+
+    .player-slot:last-child { border-bottom: none; }
+
+    .player-slot.empty {
+      color: #50505a;
+      font-style: italic;
+    }
+
+    .player-slot.lider {
+      background: rgba(241, 196, 15, 0.08);
+      border-left: 3px solid #f1c40f;
+      padding-left: 10px;
+      border-radius: 4px;
+    }
+
+    .player-role {
+      font-size: 11px;
+      font-weight: bold;
+      color: #f1c40f;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .player-name {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 6px;
+      text-align: right;
+    }
+
+    .plat-badge {
+      font-size: 11px;
+      color: #8f8f9d;
+      border: 1px solid #3a3a42;
+      background: #1b1b22;
+      border-radius: 10px;
+      padding: 2px 6px;
+      font-weight: 600;
+    }
+
+    .host-box {
+      margin-top: 12px;
+      padding: 10px;
+      border-radius: 6px;
+      background: rgba(241, 196, 15, 0.08);
+      border: 1px solid rgba(241, 196, 15, 0.25);
+      font-size: 12px;
+      color: #f6da6a;
+      line-height: 1.5;
+    }
+
+    .empty-message {
+      text-align: center;
+      color: #50505a;
+      font-style: italic;
+      width: 100%;
+      padding: 12px 0;
+    }
+
+    @media (max-width: 768px) {
+      .main-layout {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .card {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="messageBox" class="message-box"></div>
+
+  <div class="main-layout">
+    <div class="card card-cadastro">
+      <h1>1. Registro</h1>
+      <p class="subtitle">Entre com seu ID para buscar mesa</p>
+
+      <div id="userLoggedStatus" class="user-status" style="display: none;">
+        ID Ativo: <strong id="loggedName" style="color: #f1c40f;">-</strong><br />
+        Plataforma: <span id="loggedPlat">-</span>
+        <button onclick="fazerLogout()" class="btn-action btn-leave" style="margin-top: 10px; padding: 6px;">
+          Sair desta Conta
+        </button>
+      </div>
+
+      <div id="cadastroArea">
+        <div class="form-group">
+          <label for="activisionId">ID da Activision (com # ou @)</label>
+          <input type="text" id="activisionId" placeholder="Ex: joao#12345" />
+        </div>
+
+        <div class="form-group">
+          <label for="plataforma">Sua Plataforma</label>
+          <select id="plataforma">
+            <option value="" selected disabled>Selecione...</option>
+            <option value="PC">PC</option>
+            <option value="PlayStation">PlayStation</option>
+            <option value="Xbox">Xbox</option>
+            <option value="Console">Console</option>
+            <option value="Crossplay">Crossplay</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="tipoJogo">Modo de Jogo Alvo</label>
+          <select id="tipoJogo">
+            <option value="" selected disabled>Selecione o modo...</option>
+            <option value="Battle Royale">Battle Royale</option>
+            <option value="Ressurgência">Ressurgência</option>
+            <option value="Casual Battle Royale">Casual Battle Royale</option>
+            <option value="Casual Ressurgência">Casual Ressurgência</option>
+            <option value="Ranked Play">Ranked Play</option>
+            <option value="Multiplayer">Multiplayer</option>
+          </select>
+        </div>
+
+        <button class="btn-principal" onclick="processarCadastro()">Buscar Lobbies</button>
+      </div>
+    </div>
+
+    <div class="card card-em-formacao">
+      <h2>2. Em Formação</h2>
+      <p class="subtitle">Vagas abertas aguardando jogadores</p>
+      <div id="listaEmFormacao"></div>
+    </div>
+
+    <div class="card card-fechados">
+      <h2>3. Lobbies Fechados</h2>
+      <p class="subtitle">Squads lotados prontos para a partida</p>
+      <div id="listaFechados"></div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbw9rB_3YUkOpdt_X3lZ_Qq8TlZ_NnsxiT9ynr6nOs4jpDJn_luEBrN1KeZqSvOGLuAf/exec";
+    const REFRESH_MS = 3000;
+
+    let bancoLobbies = [];
+    let jogadorAtual = null;
+    let acaoEmAndamento = false;
+
+    function mostrarMensagem(texto, tipo = "info") {
+      const box = document.getElementById("messageBox");
+      box.className = "message-box";
+      box.style.display = "block";
+
+      if (tipo === "success") box.classList.add("message-success");
+      if (tipo === "error") box.classList.add("message-error");
+      if (tipo === "info") box.classList.add("message-info");
+
+      box.textContent = texto;
+
+      clearTimeout(window.__msgTimer);
+      window.__msgTimer = setTimeout(() => {
+        box.style.display = "none";
+      }, 4500);
+    }
+
+    function normalizarTexto(valor) {
+      return String(valor ?? "").trim();
+    }
+
+    function idsIguais(a, b) {
+      return normalizarTexto(a).toLowerCase() === normalizarTexto(b).toLowerCase();
+    }
+
+    function isFilled(value) {
+      const v = normalizarTexto(value);
+      return v && v.toLowerCase() !== "vaga aberta";
+    }
+
+    function contarJogadoresValidos(players) {
+      return players.filter(p => isFilled(p.nome)).length;
+    }
+
+    function obterLider(lobby) {
+      return normalizarTexto(lobby.players[0]?.nome || "");
+    }
+
+    function jogadorEhLider(lobby) {
+      return jogadorAtual && idsIguais(obterLider(lobby), jogadorAtual.id);
+    }
+
+    function formatarTempo(ms) {
+      const totalSegundos = Math.max(0, Math.floor(ms / 1000));
+      const minutos = String(Math.floor(totalSegundos / 60)).padStart(2, "0");
+      const segundos = String(totalSegundos % 60).padStart(2, "0");
+      return `${minutos}:${segundos}`;
+    }
+
+    function obterTempoRestante(lobby) {
+      const expiresAt = Number(lobby.expiresAt || 0);
+      if (!expiresAt) return null;
+      return expiresAt - Date.now();
+    }
+
+    async function chamarAPI(payload = null) {
+      const options = payload
+        ? {
+            method: "POST",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify(payload)
+          }
+        : { method: "GET" };
+
+      const response = await fetch(API_URL, options);
+      const texto = await response.text();
+
+      let data;
+      try {
+        data = JSON.parse(texto);
+      } catch (e) {
+        throw new Error(`Resposta inválida da API: ${texto.substring(0, 200)}`);
+      }
+
+      return data;
+    }
+
+    async function fetchLobbies() {
+      const data = await chamarAPI();
+
+      if (!data.ok) {
+        throw new Error(data.message || "Erro ao carregar lobbies.");
+      }
+
+      return (data.lobbies || [])
+        .map(row => ({
+          idRow: row.id,
+          idLobby: Number(row.idlobby),
+          modo: row.modojogo,
+          status: row.status || "Em Formação",
+          createdAt: Number(row.createdAt || 0),
+          expiresAt: Number(row.expiresAt || 0),
+          closedAt: Number(row.closedAt || 0),
+          players: [
+            { nome: row.vaga1, plat: row.plat1 || "" },
+            { nome: row.vaga2, plat: row.plat2 || "" },
+            { nome: row.vaga3, plat: row.plat3 || "" },
+            { nome: row.vaga4, plat: row.plat4 || "" }
+          ],
+          max: 4
+        }))
+        .filter(lobby => {
+          const total = contarJogadoresValidos(lobby.players);
+          return total > 0;
+        });
+    }
+
+    function atualizarStatusUsuario() {
+      const statusBox = document.getElementById("userLoggedStatus");
+      const cadastroArea = document.getElementById("cadastroArea");
+
+      if (jogadorAtual) {
+        statusBox.style.display = "block";
+        cadastroArea.style.display = "none";
+        document.getElementById("loggedName").textContent = jogadorAtual.id;
+        document.getElementById("loggedPlat").textContent = jogadorAtual.plataforma;
+      } else {
+        statusBox.style.display = "none";
+        cadastroArea.style.display = "block";
+      }
+    }
+
+    function encontrarLobbyDoJogador() {
+      if (!jogadorAtual) return null;
+      return bancoLobbies.find(lobby =>
+        lobby.players.some(p => idsIguais(p.nome, jogadorAtual.id))
+      ) || null;
+    }
+
+    function lobbyValidoParaEntrar(lobby) {
+      const total = contarJogadoresValidos(lobby.players);
+      const lider = obterLider(lobby);
+      const restante = obterTempoRestante(lobby);
+
+      return total > 0 && total < 4 && isFilled(lider) && lobby.status !== "Fechado" && (restante === null || restante > 0);
+    }
+
+    function temLobbyDisponivelParaEntrar() {
+      return bancoLobbies.some(lobby => lobbyValidoParaEntrar(lobby));
+    }
+
+    function obterProximoLobbyIdVisual() {
+      if (!bancoLobbies.length) return 1;
+      return Math.max(...bancoLobbies.map(l => Number(l.idLobby) || 0)) + 1;
+    }
+
+    async function carregarDadosPlanilha() {
+      try {
+        bancoLobbies = await fetchLobbies();
+        renderizarLobbies();
+      } catch (erro) {
+        console.error("Erro ao puxar dados:", erro);
+        mostrarMensagem("Não foi possível carregar os lobbies.", "error");
+        document.getElementById("listaEmFormacao").innerHTML =
+          '<p class="empty-message">Erro ao carregar lobbies.</p>';
+        document.getElementById("listaFechados").innerHTML = "";
+      }
+    }
+
+    function renderizarAvisoLider(lobby, esteEhOLobbyDoJogador, lotado) {
+      const lider = obterLider(lobby);
+      if (!lider) return "";
+
+      if (!lotado && jogadorAtual && esteEhOLobbyDoJogador && jogadorEhLider(lobby)) {
+        return `
+          <div class="host-box">
+            Você é o líder deste lobby em formação. Abra agora o grupo no jogo e aguarde os outros jogadores entrarem pelo seu ID.
+          </div>
+        `;
+      }
+
+      if (!lotado) return "";
+
+      if (!jogadorAtual || !esteEhOLobbyDoJogador) {
+        return `
+          <div class="host-box">
+            Líder do lobby: <strong>${lider}</strong>. Agora adicione o líder para entrar na partida.
+          </div>
+        `;
+      }
+
+      if (jogadorEhLider(lobby)) {
+        return `
+          <div class="host-box">
+            Você é o líder deste lobby fechado. Abra o grupo/squad no jogo para os demais entrarem.
+          </div>
+        `;
+      }
+
+      return `
+        <div class="host-box">
+          Lobby fechado. Agora adicione o ID do líder <strong>${lider}</strong> para entrar na partida.
+        </div>
+      `;
+    }
+
+    function renderPlayerName(player) {
+      if (!isFilled(player.nome)) return `<span>Vaga Aberta</span>`;
+
+      let plataformaFinal = player.plat || "";
+      if (jogadorAtual && idsIguais(player.nome, jogadorAtual.id)) {
+        plataformaFinal = jogadorAtual.plataforma || plataformaFinal;
+      }
+
+      const badge = plataformaFinal ? `<span class="plat-badge">${plataformaFinal}</span>` : "";
+
+      return `
+        <span class="player-name">
+          <strong>${player.nome}</strong>
+          ${badge}
+        </span>
+      `;
+    }
+
+    async function criarNovoLobbyComoLider() {
+      if (!jogadorAtual || acaoEmAndamento) return;
+
+      try {
+        const lobbyJaAtual = encontrarLobbyDoJogador();
+        if (lobbyJaAtual) {
+          mostrarMensagem("Você já está em um lobby.", "error");
+          return;
+        }
+
+        acaoEmAndamento = true;
+        renderizarLobbies();
+        mostrarMensagem("Criando seu lobby...", "info");
+
+        const resultado = await chamarAPI({
+          action: "createLobby",
+          playerId: jogadorAtual.id,
+          plataforma: jogadorAtual.plataforma,
+          modo: jogadorAtual.tipoJogo
+        });
+
+        if (!resultado.ok) {
+          mostrarMensagem(resultado.message || "Não foi possível criar novo lobby.", "error");
+          return;
+        }
+
+        await carregarDadosPlanilha();
+        mostrarMensagem("Novo lobby criado. Você virou o líder da formação.", "success");
+      } catch (erro) {
+        console.error("Erro ao criar lobby:", erro);
+        mostrarMensagem(`Erro ao criar lobby: ${erro.message}`, "error");
+      } finally {
+        acaoEmAndamento = false;
+        renderizarLobbies();
+      }
+    }
+
+    function renderizarEstadoSemLobby() {
+      const emFormacao = document.getElementById("listaEmFormacao");
+      if (!jogadorAtual) return;
+
+      const lobbyDoJogador = encontrarLobbyDoJogador();
+      if (lobbyDoJogador) return;
+      if (temLobbyDisponivelParaEntrar()) return;
+
+      emFormacao.innerHTML = `
+        <div class="squad-card">
+          <div class="squad-header">
+            <div class="squad-mode">${jogadorAtual.tipoJogo || "Novo Lobby"}</div>
+            <div class="squad-slots">Líder</div>
+          </div>
+          <div class="lobby-id">Nenhum lobby em formação disponível</div>
+          <div class="host-box">
+            Você pode aguardar outro jogador criar um lobby ou criar agora o seu próprio lobby e virar o líder da formação.
+          </div>
+          <button class="btn-action btn-join" ${acaoEmAndamento ? "disabled" : ""} onclick="criarNovoLobbyComoLider()">
+            ${acaoEmAndamento ? "CRIANDO..." : "CRIAR NOVO LOBBY"}
+          </button>
+        </div>
+      `;
+    }
+
+    function renderizarLobbies() {
+      const emFormacao = document.getElementById("listaEmFormacao");
+      const fechados = document.getElementById("listaFechados");
+
+      emFormacao.innerHTML = "";
+      fechados.innerHTML = "";
+
+      let qtdFormacao = 0;
+      let qtdFechados = 0;
+
+      const lobbyDoJogador = encontrarLobbyDoJogador();
+
+      bancoLobbies.forEach((lobby, index) => {
+        const totalPlayers = contarJogadoresValidos(lobby.players);
+        const lotado = totalPlayers >= lobby.max || lobby.status === "Fechado";
+        const esteEhOLobbyDoJogador = lobbyDoJogador && lobby.idLobby === lobbyDoJogador.idLobby;
+        const lider = obterLider(lobby);
+        const restante = obterTempoRestante(lobby);
+
+        if (restante !== null && restante <= 0) return;
+        if (!lotado && !lobbyValidoParaEntrar(lobby) && !esteEhOLobbyDoJogador) return;
+
+        let slotsHtml = "";
+        for (let i = 0; i < 4; i++) {
+          const player = lobby.players[i] || { nome: "", plat: "" };
+
+          if (isFilled(player.nome)) {
+            const liderClasse = i === 0 ? "lider" : "";
+            const marcadorLider = i === 0 ? `<span class="player-role">LÍDER</span>` : "";
+            slotsHtml += `
+              <div class="player-slot ${liderClasse}">
+                <span>Jogador ${i + 1} ${marcadorLider}</span>
+                ${renderPlayerName(player)}
+              </div>
+            `;
+          } else {
+            slotsHtml += `
+              <div class="player-slot empty">
+                <span>Jogador ${i + 1}</span>
+                <span>Vaga Aberta</span>
+              </div>
+            `;
+          }
+        }
+
+        let timerHtml = "";
+        if (restante !== null) {
+          timerHtml = `
+            <div class="timer-wrap">
+              <span class="timer-badge">
+                ${lotado ? "Tempo restante" : "Expira em"}: ${formatarTempo(restante)}
+              </span>
+            </div>
+          `;
+        }
+
+        let botaoAcao = "";
+        if (jogadorAtual) {
+          if (esteEhOLobbyDoJogador) {
+            botaoAcao = `<button class="btn-action btn-leave" ${acaoEmAndamento ? "disabled" : ""} onclick="sairDoLobby(${index})">Sair do Lobby</button>`;
+          } else if (!lobbyDoJogador && !lotado && lobbyValidoParaEntrar(lobby) && !acaoEmAndamento) {
+            botaoAcao = `<button class="btn-action btn-join" onclick="entrarNoLobby(${index})">Entrar no Lobby</button>`;
+          }
+        }
+
+        const card = `
+          <div class="squad-card">
+            <div class="squad-header">
+              <div class="squad-mode">${lobby.modo}</div>
+              <div class="squad-slots">${totalPlayers}/4</div>
+            </div>
+            <div class="lobby-id">Lobby: ${lobby.idLobby}</div>
+            ${timerHtml}
+            ${slotsHtml}
+            ${lider ? renderizarAvisoLider(lobby, esteEhOLobbyDoJogador, lotado) : ""}
+            ${botaoAcao}
+          </div>
+        `;
+
+        if (lotado) {
+          qtdFechados++;
+          fechados.innerHTML += card;
+        } else {
+          qtdFormacao++;
+          emFormacao.innerHTML += card;
+        }
+      });
+
+      if (qtdFormacao === 0) {
+        if (jogadorAtual) {
+          renderizarEstadoSemLobby();
+        } else {
+          emFormacao.innerHTML = '<p class="empty-message">Nenhum lobby em formação.</p>';
+        }
+      }
+
+      if (qtdFechados === 0) {
+        fechados.innerHTML = '<p class="empty-message">Nenhum lobby fechado no momento.</p>';
+      }
+
+      atualizarStatusUsuario();
+    }
+
+    function processarCadastro() {
+      const activisionId = normalizarTexto(document.getElementById("activisionId").value);
+      const plataforma = normalizarTexto(document.getElementById("plataforma").value);
+      const tipoJogo = normalizarTexto(document.getElementById("tipoJogo").value);
+
+      if (!activisionId || !plataforma || !tipoJogo) {
+        mostrarMensagem("Preencha todos os campos antes de continuar.", "error");
+        return;
+      }
+
+      jogadorAtual = {
+        id: activisionId,
+        plataforma,
+        tipoJogo
+      };
+
+      renderizarLobbies();
+      mostrarMensagem("Cadastro realizado. Agora você pode entrar em uma formação existente ou criar a sua.", "success");
+    }
+
+    function fazerLogout() {
+      const lobbyAtual = encontrarLobbyDoJogador();
+      if (lobbyAtual) {
+        mostrarMensagem("Saia primeiro do lobby antes de trocar de conta.", "error");
+        return;
+      }
+
+      jogadorAtual = null;
+      document.getElementById("activisionId").value = "";
+      document.getElementById("plataforma").selectedIndex = 0;
+      document.getElementById("tipoJogo").selectedIndex = 0;
+      renderizarLobbies();
+      mostrarMensagem("Você saiu da conta atual.", "info");
+    }
+
+    async function entrarNoLobby(index) {
+      if (acaoEmAndamento) return;
+
+      try {
+        if (!jogadorAtual) {
+          mostrarMensagem("Faça seu registro antes.", "error");
+          return;
+        }
+
+        const lobbyJaAtual = encontrarLobbyDoJogador();
+        if (lobbyJaAtual) {
+          mostrarMensagem("Você já está em um lobby. Saia dele antes de entrar em outro.", "error");
+          return;
+        }
+
+        const lobby = bancoLobbies[index];
+        if (!lobby || !lobbyValidoParaEntrar(lobby)) {
+          mostrarMensagem("Esse lobby não está disponível para entrada.", "error");
+          await carregarDadosPlanilha();
+          return;
+        }
+
+        acaoEmAndamento = true;
+        renderizarLobbies();
+        mostrarMensagem("Verificando vaga em tempo real...", "info");
+
+        const resultado = await chamarAPI({
+          action: "join",
+          lobbyId: Number(lobby.idLobby),
+          playerId: jogadorAtual.id,
+          plataforma: jogadorAtual.plataforma
+        });
+
+        if (!resultado.ok) {
+          mostrarMensagem(resultado.message || "Não foi possível entrar no lobby.", "error");
+          await carregarDadosPlanilha();
+          return;
+        }
+
+        await carregarDadosPlanilha();
+        mostrarMensagem(resultado.message || "Você entrou no lobby com sucesso.", "success");
+      } catch (erro) {
+        console.error("Erro ao entrar:", erro);
+        mostrarMensagem(`Erro ao entrar: ${erro.message}`, "error");
+        await carregarDadosPlanilha();
+      } finally {
+        acaoEmAndamento = false;
+        renderizarLobbies();
+      }
+    }
+
+    async function sairDoLobby(index) {
+      if (acaoEmAndamento) return;
+
+      try {
+        if (!jogadorAtual) {
+          mostrarMensagem("Nenhum jogador ativo.", "error");
+          return;
+        }
+
+        acaoEmAndamento = true;
+        renderizarLobbies();
+
+        const lobby = bancoLobbies[index];
+        if (!lobby) {
+          mostrarMensagem("Lobby não encontrado.", "error");
+          return;
+        }
+
+        const resultado = await chamarAPI({
+          action: "leave",
+          lobbyId: Number(lobby.idLobby),
+          playerId: jogadorAtual.id
+        });
+
+        if (!resultado.ok) {
+          mostrarMensagem(resultado.message || "Não foi possível sair do lobby.", "error");
+          await carregarDadosPlanilha();
+          return;
+        }
+
+        await carregarDadosPlanilha();
+        mostrarMensagem(resultado.message || "Você saiu do lobby com sucesso.", "info");
+      } catch (erro) {
+        console.error("Erro ao sair do lobby:", erro);
+        mostrarMensagem("Não foi possível sair do lobby.", "error");
+        await carregarDadosPlanilha();
+      } finally {
+        acaoEmAndamento = false;
+        renderizarLobbies();
+      }
+    }
+
+    carregarDadosPlanilha();
+
+    setInterval(() => {
+      renderizarLobbies();
+    }, 1000);
+
+    setInterval(async () => {
+      await carregarDadosPlanilha();
+    }, REFRESH_MS);
+  </script>
+</body>
+</html>
