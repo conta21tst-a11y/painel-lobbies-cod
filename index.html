@@ -10,6 +10,7 @@
     :root {
       --bg: #080c13;
       --surface: #111827;
+      --surface: #111827;
       --surface-2: #162033;
       --surface-3: #0c131f;
       --border: rgba(255,255,255,.09);
@@ -544,10 +545,6 @@
       display: none;
     }
 
-    .hidden {
-      display: none !important;
-    }
-
     @media (max-width: 1024px) {
       :root {
         --bottom-space: 100px;
@@ -616,7 +613,6 @@
 
     <div id="notice" class="notice"></div>
 
-    <!-- DESKTOP -->
     <main class="desktop-layout">
       <section class="panel">
         <div class="panel-header">
@@ -646,7 +642,6 @@
       </section>
     </main>
 
-    <!-- MOBILE -->
     <main class="mobile-layout">
       <section id="mobile-lobbies" class="mobile-section active panel">
         <div class="panel-header">
@@ -693,7 +688,7 @@
     const API_URL =
       "https://script.google.com/macros/s/AKfycbw9rB_3YUkOpdt_X3lZ_Qq8TlZ_NnsxiT9ynr6nOs4jpDJn_luEBrN1KeZqSvOGLuAf/exec";
 
-    const SESSION_KEY = "cod_lobby_session_v4";
+    const SESSION_KEY = "cod_lobby_session_v5";
 
     let jogadorAtual = null;
     let lobbies = [];
@@ -824,8 +819,13 @@
     }
 
     function estaFechado(lobby) {
-      return lobby.status.toLowerCase() === "fechado" ||
-        quantidadeJogadores(lobby) >= 4;
+      const status = texto(lobby.status).toLowerCase();
+
+      return (
+        status === "fechado" ||
+        status === "closed" ||
+        quantidadeJogadores(lobby) >= 4
+      );
     }
 
     function lider(lobby) {
@@ -839,7 +839,6 @@
     function podeEntrar(lobby) {
       return !!jogadorAtual &&
         !meuLobby() &&
-        jogadorAtual.modo === lobby.modo &&
         !estaFechado(lobby);
     }
 
@@ -960,7 +959,7 @@
               <strong>${lobby ? `Lobby #${lobby.id}` : "Livre"}</strong>
             </div>
             <div class="info-row">
-              <span>Modo</span>
+              <span>Modo padrão para criar</span>
               <strong>${jogadorAtual.modo}</strong>
             </div>
           </div>
@@ -1053,7 +1052,7 @@
               <strong>${jogadorAtual.plataforma}</strong>
             </div>
             <div class="info-row">
-              <span>Modo</span>
+              <span>Modo para criar</span>
               <strong>${jogadorAtual.modo}</strong>
             </div>
           </div>
@@ -1076,11 +1075,13 @@
       });
     }
 
-    function htmlJogador(player, posicao) {
+    function htmlJogador(player, indice) {
+      const numeroJogador = indice + 1;
+
       if (!preenchido(player.nome)) {
         return `
           <div class="player empty">
-            <span>Jogador ${posicao}</span>
+            <span>Jogador ${numeroJogador}</span>
             <span>Vaga aberta</span>
           </div>
         `;
@@ -1090,12 +1091,15 @@
         ? jogadorAtual.plataforma
         : texto(player.plataforma);
 
+      const ehLider = indice === 0;
+
       return `
-        <div class="player ${posicao === 1 ? "leader" : ""}">
+        <div class="player ${ehLider ? "leader" : ""}">
           <span>
-            Jogador ${posicao}
-            ${posicao === 1 ? '<span class="leader-tag">LÍDER</span>' : ""}
+            Jogador ${numeroJogador}
+            ${ehLider ? '<span class="leader-tag">LÍDER</span>' : ""}
           </span>
+
           <span class="player-right">
             <strong>${player.nome}</strong>
             ${plataforma ? `<span class="badge">${plataforma}</span>` : ""}
@@ -1111,6 +1115,8 @@
       const tempo = lobby.expiresAt
         ? Math.max(0, Math.floor((lobby.expiresAt - Date.now()) / 1000))
         : null;
+
+      const nomeLider = texto(lobby.players[0]?.nome);
 
       return `
         <article class="lobby ${souEu ? "current" : ""}">
@@ -1130,7 +1136,7 @@
           </div>
 
           <div class="players">
-            ${lobby.players.map(htmlJogador).join("")}
+            ${lobby.players.map((player, indice) => htmlJogador(player, indice)).join("")}
           </div>
 
           ${souEu && souLider(lobby) && !fechado ? `
@@ -1141,7 +1147,7 @@
 
           ${fechado ? `
             <div class="hint">
-              O líder deste lobby é <strong>${lider(lobby)}</strong>.
+              O líder deste lobby é <strong>${nomeLider}</strong>.
               Adicione esse ID no jogo para entrar.
             </div>
           ` : ""}
@@ -1168,10 +1174,10 @@
       ];
 
       const filtrados = lobbies.filter(lobby => {
-        if (!jogadorAtual) return true;
-        if (meuLobby()?.id === lobby.id) return true;
-        if (lobby.modo !== jogadorAtual.modo) return false;
-        return somenteFechados ? estaFechado(lobby) : !estaFechado(lobby);
+        if (somenteFechados) {
+          return estaFechado(lobby);
+        }
+        return !estaFechado(lobby);
       });
 
       const lista = filtrados.length
@@ -1274,8 +1280,7 @@
       salvarSessao();
       renderizarTudo();
 
-      mostrarAviso(`Modo alterado para ${novoModo}.`, "success");
-      await atualizarLobbies();
+      mostrarAviso(`Modo padrão alterado para ${novoModo}. Isso afeta apenas a criação de novos lobbies.`, "success");
     }
 
     async function criarLobby() {
