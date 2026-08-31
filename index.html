@@ -3,428 +3,816 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Painel de Lobbies - CoD</title>
+  <title>COD Squad Mobile</title>
   <style>
+    :root {
+      --bg: #06080d;
+      --bg-soft: #0b1018;
+      --surface: rgba(15, 20, 31, 0.84);
+      --surface-2: rgba(21, 28, 40, 0.96);
+      --surface-3: rgba(255, 255, 255, 0.03);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-soft: rgba(255, 255, 255, 0.05);
+      --text: #eef3ff;
+      --muted: #8b97b6;
+      --muted-2: #66708c;
+      --yellow: #f4c63d;
+      --yellow-2: #ffdc70;
+      --green: #33d17a;
+      --red: #ff6161;
+      --blue: #5da6ff;
+      --shadow: 0 24px 70px rgba(0,0,0,.42);
+      --radius-xl: 28px;
+      --radius-lg: 20px;
+      --radius-md: 16px;
+      --radius-sm: 12px;
+      --max: 1380px;
+    }
+
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
       font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      min-height: 100%;
     }
 
     body {
-      background-color: #0f0f12;
-      color: #e1e1e6;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 15% 0%, rgba(244,198,61,.08), transparent 18%),
+        radial-gradient(circle at 50% 0%, rgba(93,166,255,.10), transparent 30%),
+        linear-gradient(180deg, #05070b 0%, #070b12 42%, #05070b 100%);
+    }
+
+    button, input, select {
+      font: inherit;
+    }
+
+    .app {
+      max-width: var(--max);
+      margin: 0 auto;
       min-height: 100vh;
-      padding: 20px;
+      padding: 18px;
+      padding-bottom: 96px;
     }
 
-    .main-layout {
+    .topbar {
       display: flex;
-      gap: 20px;
-      width: 100%;
-      max-width: 1400px;
-      flex-wrap: wrap;
-      justify-content: center;
-      margin-top: 20px;
-    }
-
-    .card {
-      background-color: #191920;
-      padding: 25px;
-      border-radius: 8px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
-      flex: 1;
-      min-width: 320px;
-      max-width: 430px;
-      height: fit-content;
-    }
-
-    .card-cadastro { border-top: 5px solid #f1c40f; }
-    .card-em-formacao { border-top: 5px solid #2ecc71; }
-    .card-fechados { border-top: 5px solid #e74c3c; }
-
-    h1, h2 {
-      text-align: center;
-      margin-bottom: 5px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      font-size: 20px;
-    }
-
-    .card-cadastro h1 { color: #f1c40f; }
-    .card-em-formacao h2 { color: #2ecc71; }
-    .card-fechados h2 { color: #e74c3c; }
-
-    p.subtitle {
-      text-align: center;
-      color: #8f8f9d;
-      font-size: 13px;
-      margin-bottom: 25px;
-    }
-
-    .form-group { margin-bottom: 18px; }
-
-    label {
-      display: block;
-      margin-bottom: 6px;
-      font-size: 13px;
-      font-weight: 600;
-      color: #c4c4cc;
-    }
-
-    input[type="text"], select {
-      width: 100%;
-      padding: 12px;
-      background-color: #0f0f12;
-      border: 2px solid #29292e;
-      border-radius: 4px;
-      color: #fff;
-      font-size: 15px;
-      transition: border-color 0.2s;
-    }
-
-    input[type="text"]:focus, select:focus {
-      outline: none;
-      border-color: #f1c40f;
-    }
-
-    .btn-principal {
-      width: 100%;
-      padding: 12px;
-      background-color: #f1c40f;
-      color: #0f0f12;
-      border: none;
-      border-radius: 4px;
-      font-size: 15px;
-      font-weight: bold;
-      text-transform: uppercase;
-      cursor: pointer;
-      text-align: center;
-    }
-
-    .btn-principal:hover { opacity: 0.9; }
-
-    .btn-action {
-      width: 100%;
-      padding: 10px;
-      font-size: 13px;
-      margin-top: 10px;
-      border: none;
-      border-radius: 4px;
-      font-weight: bold;
-      cursor: pointer;
-      text-transform: uppercase;
-      text-align: center;
-    }
-
-    .btn-action:disabled,
-    .btn-principal:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    .btn-join { background-color: #2ecc71; color: #fff; }
-    .btn-leave { background-color: #e74c3c; color: #fff; }
-    .btn-secondary { background-color: #3498db; color: #fff; }
-
-    .user-status {
-      background-color: #29292e;
-      padding: 12px;
-      border-radius: 4px;
-      margin-bottom: 20px;
-      font-size: 13px;
-      text-align: center;
-      border-left: 4px solid #f1c40f;
-    }
-
-    .message-box {
-      width: 100%;
-      max-width: 1400px;
-      margin-top: 10px;
-      margin-bottom: 10px;
-      padding: 12px 16px;
-      border-radius: 6px;
-      font-size: 14px;
-      display: none;
-    }
-
-    .message-success {
-      background: rgba(46, 204, 113, 0.12);
-      color: #7ff0ab;
-      border: 1px solid rgba(46, 204, 113, 0.4);
-    }
-
-    .message-error {
-      background: rgba(231, 76, 60, 0.12);
-      color: #ff9f96;
-      border: 1px solid rgba(231, 76, 60, 0.4);
-    }
-
-    .message-info {
-      background: rgba(241, 196, 15, 0.12);
-      color: #f6da6a;
-      border: 1px solid rgba(241, 196, 15, 0.4);
-    }
-
-    .squad-card {
-      background-color: #0f0f12;
-      border: 1px solid #29292e;
-      border-radius: 6px;
-      padding: 15px;
-      margin-bottom: 15px;
-    }
-
-    .squad-header {
-      display: flex;
-      justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid #29292e;
-      padding-bottom: 8px;
-      margin-bottom: 10px;
-      gap: 10px;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 16px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--border-soft);
     }
 
-    .squad-mode {
-      font-weight: bold;
-      font-size: 14px;
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
     }
 
-    .card-em-formacao .squad-mode { color: #2ecc71; }
-    .card-fechados .squad-mode { color: #e74c3c; }
+    .brand-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(180deg, #f8cf58, #d6a71b);
+      color: #131821;
+      font-weight: 900;
+      box-shadow: 0 16px 38px rgba(244,198,61,.2);
+      flex: 0 0 auto;
+    }
 
-    .squad-slots,
-    .timer-badge {
-      background-color: #29292e;
-      padding: 2px 8px;
-      border-radius: 10px;
-      font-size: 11px;
-      font-weight: bold;
-      color: #fff;
+    .brand-copy h1 {
+      font-size: 24px;
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: -.3px;
+    }
+
+    .brand-copy p {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 5px;
+      line-height: 1.4;
+    }
+
+    .status-pill {
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      color: var(--muted);
+      font-size: 12px;
       white-space: nowrap;
     }
 
-    .timer-wrap {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      margin-bottom: 8px;
-      flex-wrap: wrap;
+    .message-box {
+      display: none;
+      margin-bottom: 16px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      font-size: 14px;
     }
 
-    .timer-badge {
-      background: rgba(241, 196, 15, 0.16);
-      color: #f6da6a;
-      border: 1px solid rgba(241, 196, 15, 0.25);
+    .message-success {
+      display: block;
+      background: rgba(51,209,122,.12);
+      border-color: rgba(51,209,122,.28);
+      color: #8ff0b8;
     }
 
-    .lobby-id {
-      color: #8f8f9d;
-      font-size: 12px;
-      margin-bottom: 8px;
+    .message-error {
+      display: block;
+      background: rgba(255,97,97,.12);
+      border-color: rgba(255,97,97,.28);
+      color: #ffb3b3;
     }
 
-    .player-slot {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 6px 0;
-      font-size: 13px;
-      color: #c4c4cc;
-      border-bottom: 1px dashed rgba(255,255,255,0.05);
-      gap: 10px;
+    .message-info {
+      display: block;
+      background: rgba(244,198,61,.10);
+      border-color: rgba(244,198,61,.25);
+      color: #f5dd8b;
     }
 
-    .player-slot:last-child { border-bottom: none; }
-
-    .player-slot.empty {
-      color: #50505a;
-      font-style: italic;
+    .desktop-layout {
+      display: grid;
+      grid-template-columns: 300px minmax(0, 1fr);
+      gap: 18px;
+      align-items: start;
     }
 
-    .player-slot.lider {
-      background: rgba(241, 196, 15, 0.08);
-      border-left: 3px solid #f1c40f;
-      padding-left: 10px;
-      border-radius: 4px;
+    .sidebar {
+      display: grid;
+      gap: 18px;
+      position: sticky;
+      top: 18px;
     }
 
-    .player-role {
+    .main-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.45fr) minmax(280px, .8fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    .panel-head {
+      padding: 18px 18px 12px;
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    .panel-kicker {
       font-size: 11px;
-      font-weight: bold;
-      color: #f1c40f;
+      letter-spacing: 1px;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      color: var(--muted);
+      margin-bottom: 8px;
     }
 
-    .player-name {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      flex-wrap: wrap;
-      gap: 6px;
-      text-align: right;
+    .panel-title {
+      font-size: 18px;
+      line-height: 1.1;
+      font-weight: 900;
+      margin-bottom: 6px;
     }
 
-    .plat-badge {
-      font-size: 11px;
-      color: #8f8f9d;
-      border: 1px solid #3a3a42;
-      background: #1b1b22;
-      border-radius: 10px;
-      padding: 2px 6px;
-      font-weight: 600;
-    }
-
-    .host-box {
-      margin-top: 12px;
-      padding: 10px;
-      border-radius: 6px;
-      background: rgba(241, 196, 15, 0.08);
-      border: 1px solid rgba(241, 196, 15, 0.25);
-      font-size: 12px;
-      color: #f6da6a;
+    .panel-subtitle {
+      color: var(--muted);
+      font-size: 13px;
       line-height: 1.5;
     }
 
-    .empty-message {
-      text-align: center;
-      color: #50505a;
-      font-style: italic;
-      width: 100%;
-      padding: 12px 0;
+    .panel-body {
+      padding: 16px;
     }
 
-    .modo-switch-box {
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px solid rgba(255,255,255,0.08);
-      text-align: left;
+    .stack {
+      display: grid;
+      gap: 14px;
     }
 
-    .modo-switch-box label {
+    .hero {
+      border-radius: 20px;
+      padding: 16px;
+      background: linear-gradient(180deg, rgba(244,198,61,.12), rgba(255,255,255,.02));
+      border: 1px solid rgba(244,198,61,.16);
+    }
+
+    .hero h2 {
+      font-size: 22px;
+      line-height: 1.08;
+      font-weight: 900;
       margin-bottom: 8px;
     }
 
-    @media (max-width: 768px) {
-      .main-layout {
-        flex-direction: column;
-        align-items: stretch;
+    .hero p {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .card {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 14px;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+    }
+
+    .field label {
+      font-size: 13px;
+      color: #d8e3ff;
+      font-weight: 800;
+    }
+
+    .input, .select {
+      width: 100%;
+      min-height: 52px;
+      background: #0b1119;
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,.09);
+      border-radius: 14px;
+      padding: 14px;
+      outline: none;
+    }
+
+    .input:focus, .select:focus {
+      border-color: rgba(244,198,61,.55);
+      box-shadow: 0 0 0 3px rgba(244,198,61,.10);
+    }
+
+    .btn {
+      width: 100%;
+      min-height: 52px;
+      border: none;
+      border-radius: 16px;
+      padding: 14px 16px;
+      cursor: pointer;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .4px;
+      transition: transform .15s ease, opacity .15s ease;
+    }
+
+    .btn:active {
+      transform: translateY(1px) scale(.995);
+    }
+
+    .btn:disabled {
+      opacity: .65;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background: linear-gradient(180deg, #ffd34d, #eebb20);
+      color: #11161d;
+    }
+
+    .btn-success {
+      background: linear-gradient(180deg, #41df90, #25bc6d);
+      color: #08140d;
+    }
+
+    .btn-danger {
+      background: linear-gradient(180deg, #ff6b6b, #ff5757);
+      color: #fff;
+    }
+
+    .btn-secondary {
+      background: linear-gradient(180deg, #76b9ff, #4d97ee);
+      color: #07121d;
+    }
+
+    .btn-ghost {
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .profile-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .identity {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.02);
+      border: 1px solid var(--border);
+    }
+
+    .avatar {
+      width: 54px;
+      height: 54px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(180deg, rgba(244,198,61,.18), rgba(255,255,255,.04));
+      border: 1px solid rgba(244,198,61,.2);
+      color: var(--yellow);
+      font-size: 20px;
+      font-weight: 900;
+      flex: 0 0 auto;
+    }
+
+    .identity h3 {
+      font-size: 18px;
+      line-height: 1.1;
+      font-weight: 900;
+      margin-bottom: 4px;
+    }
+
+    .identity p {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .info-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 13px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.02);
+      border: 1px solid var(--border-soft);
+      font-size: 13px;
+    }
+
+    .info-row span:first-child {
+      color: var(--muted);
+    }
+
+    .hint {
+      border-radius: 16px;
+      padding: 14px;
+      background: rgba(244,198,61,.10);
+      border: 1px solid rgba(244,198,61,.20);
+      color: #f4dc89;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .primary-stage {
+      display: grid;
+      gap: 16px;
+    }
+
+    .current-lobby {
+      border-radius: 22px;
+      padding: 18px;
+      background: linear-gradient(180deg, rgba(51,209,122,.12), rgba(255,255,255,.02));
+      border: 1px solid rgba(51,209,122,.20);
+    }
+
+    .current-lobby-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .current-lobby h3 {
+      font-size: 21px;
+      line-height: 1.08;
+      font-weight: 900;
+      margin-bottom: 6px;
+      color: #cffff0;
+    }
+
+    .current-lobby p {
+      color: #d7ffe8;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .meta {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .badge {
+      padding: 5px 9px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 900;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.05);
+      color: #dce5ff;
+      white-space: nowrap;
+    }
+
+    .badge-yellow {
+      background: rgba(244,198,61,.12);
+      border-color: rgba(244,198,61,.18);
+      color: #f4dc89;
+    }
+
+    .segmented {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      padding: 6px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid var(--border);
+    }
+
+    .segmented button {
+      min-height: 48px;
+      border: none;
+      border-radius: 13px;
+      background: transparent;
+      color: var(--muted);
+      font-weight: 900;
+      cursor: pointer;
+      padding: 0 12px;
+    }
+
+    .segmented button.active {
+      background: rgba(255,255,255,.08);
+      color: var(--text);
+    }
+
+    .list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .lobby-card {
+      border-radius: 20px;
+      padding: 16px;
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+      border: 1px solid var(--border);
+    }
+
+    .lobby-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .lobby-title {
+      font-size: 17px;
+      line-height: 1.1;
+      font-weight: 900;
+    }
+
+    .mode-open {
+      color: var(--green);
+    }
+
+    .mode-closed {
+      color: #ff8f8f;
+    }
+
+    .players {
+      display: grid;
+      gap: 8px;
+      margin: 12px 0;
+    }
+
+    .player {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.02);
+      border: 1px solid var(--border-soft);
+      font-size: 13px;
+    }
+
+    .player.empty {
+      color: var(--muted-2);
+      font-style: italic;
+    }
+
+    .player.lider {
+      background: rgba(244,198,61,.09);
+      border-color: rgba(244,198,61,.18);
+    }
+
+    .player-left,
+    .player-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .player-right {
+      justify-content: flex-end;
+      text-align: right;
+    }
+
+    .role {
+      font-size: 11px;
+      color: var(--yellow);
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 28px 16px;
+      border-radius: 20px;
+      border: 1px dashed rgba(255,255,255,.08);
+      background: rgba(255,255,255,.02);
+      color: var(--muted);
+    }
+
+    .empty-state h3 {
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .aside-box {
+      display: grid;
+      gap: 14px;
+    }
+
+    .aside-hero {
+      border-radius: 20px;
+      padding: 16px;
+      background: linear-gradient(180deg, rgba(93,166,255,.10), rgba(255,255,255,.02));
+      border: 1px solid rgba(93,166,255,.16);
+    }
+
+    .aside-hero h3 {
+      font-size: 19px;
+      line-height: 1.1;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+
+    .aside-hero p {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .mobile-only {
+      display: none;
+    }
+
+    .mobile-view {
+      display: none;
+    }
+
+    .mobile-view.active {
+      display: block;
+    }
+
+    .mobile-tabs {
+      position: fixed;
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+      z-index: 60;
+      display: none;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      padding: 8px;
+      border-radius: 22px;
+      border: 1px solid var(--border);
+      background: rgba(15, 20, 31, .94);
+      backdrop-filter: blur(16px);
+      box-shadow: var(--shadow);
+    }
+
+    .tab-btn {
+      min-height: 58px;
+      border: none;
+      border-radius: 16px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 900;
+      display: grid;
+      place-items: center;
+      gap: 5px;
+      cursor: pointer;
+    }
+
+    .tab-btn.active {
+      background: rgba(255,255,255,.08);
+      color: var(--text);
+    }
+
+    .tab-icon {
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    @media (max-width: 1180px) {
+      .desktop-layout {
+        grid-template-columns: 1fr;
       }
 
-      .card {
-        max-width: 100%;
+      .sidebar {
+        position: static;
+      }
+
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 920px) {
+      .desktop-only {
+        display: none;
+      }
+
+      .mobile-only {
+        display: block;
+      }
+
+      .mobile-tabs {
+        display: grid;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .app {
+        padding: 12px;
+        padding-bottom: 92px;
+      }
+
+      .brand-copy h1 {
+        font-size: 20px;
+      }
+
+      .status-pill {
+        font-size: 11px;
+        padding: 9px 11px;
+      }
+
+      .topbar {
+        align-items: start;
       }
     }
   </style>
 </head>
 <body>
-  <div id="messageBox" class="message-box"></div>
-
-  <div class="main-layout">
-    <div class="card card-cadastro">
-      <h1>1. Registro</h1>
-      <p class="subtitle">Entre com seu ID para buscar mesa</p>
-
-      <div id="userLoggedStatus" class="user-status" style="display: none;">
-        ID Ativo: <strong id="loggedName" style="color: #f1c40f;">-</strong><br />
-        Plataforma: <span id="loggedPlat">-</span><br />
-        Modo atual: <span id="loggedModo">-</span>
-
-        <div id="trocarModoArea" class="modo-switch-box" style="display: none;">
-          <label for="modoDepoisDeSair">Escolha outro modo</label>
-          <select id="modoDepoisDeSair">
-            <option value="" disabled>Selecione o modo...</option>
-            <option value="Battle Royale">Battle Royale</option>
-            <option value="Ressurgência">Ressurgência</option>
-            <option value="Casual Battle Royale">Casual Battle Royale</option>
-            <option value="Casual Ressurgência">Casual Ressurgência</option>
-            <option value="Ranked Play">Ranked Play</option>
-            <option value="Multiplayer">Multiplayer</option>
-          </select>
-          <button onclick="confirmarNovoModo()" class="btn-action btn-secondary">
-            BUSCAR OUTRO MODO
-          </button>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-icon">C</div>
+        <div class="brand-copy">
+          <h1>COD Squad Mobile</h1>
+          <p>Fila rápida para formar e fechar lobbies</p>
         </div>
-
-        <button onclick="fazerLogout()" class="btn-action btn-leave" style="margin-top: 10px; padding: 6px;">
-          Sair desta Conta
-        </button>
       </div>
+      <div id="topbarStatus" class="status-pill">Visitante</div>
+    </header>
 
-      <div id="cadastroArea">
-        <div class="form-group">
-          <label for="activisionId">ID da Activision (com # ou @)</label>
-          <input type="text" id="activisionId" placeholder="Ex: joao#12345" />
+    <div id="messageBox" class="message-box"></div>
+
+    <main class="desktop-only">
+      <div class="desktop-layout">
+        <aside class="sidebar">
+          <section class="panel">
+            <div class="panel-head">
+              <div class="panel-kicker">Conta</div>
+              <div class="panel-title">Perfil e modo</div>
+              <div class="panel-subtitle">Login salvo, troca de modo e saída da conta em um único lugar.</div>
+            </div>
+            <div class="panel-body" id="desktopProfileArea"></div>
+          </section>
+        </aside>
+
+        <div class="main-grid">
+          <section class="panel">
+            <div class="panel-head">
+              <div class="panel-kicker">Principal</div>
+              <div class="panel-title">Lobbies e status atual</div>
+              <div class="panel-subtitle">Seu lobby atual aparece primeiro. A ação de sair existe somente aqui para não gerar confusão.</div>
+            </div>
+            <div class="panel-body" id="desktopCenterArea"></div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head">
+              <div class="panel-kicker">Criar</div>
+              <div class="panel-title">Criar como líder</div>
+              <div class="panel-subtitle">Um painel enxuto para abrir um novo lobby quando você estiver livre.</div>
+            </div>
+            <div class="panel-body" id="desktopCreateArea"></div>
+          </section>
         </div>
-
-        <div class="form-group">
-          <label for="plataforma">Sua Plataforma</label>
-          <select id="plataforma">
-            <option value="" selected disabled>Selecione...</option>
-            <option value="PC">PC</option>
-            <option value="PlayStation">PlayStation</option>
-            <option value="Xbox">Xbox</option>
-            <option value="Console">Console</option>
-            <option value="Crossplay">Crossplay</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="tipoJogo">Modo de Jogo Alvo</label>
-          <select id="tipoJogo">
-            <option value="" selected disabled>Selecione o modo...</option>
-            <option value="Battle Royale">Battle Royale</option>
-            <option value="Ressurgência">Ressurgência</option>
-            <option value="Casual Battle Royale">Casual Battle Royale</option>
-            <option value="Casual Ressurgência">Casual Ressurgência</option>
-            <option value="Ranked Play">Ranked Play</option>
-            <option value="Multiplayer">Multiplayer</option>
-          </select>
-        </div>
-
-        <button class="btn-principal" onclick="processarCadastro()">Buscar Lobbies</button>
       </div>
-    </div>
+    </main>
 
-    <div class="card card-em-formacao">
-      <h2>2. Em Formação</h2>
-      <p class="subtitle">Vagas abertas aguardando jogadores</p>
-      <div id="listaEmFormacao"></div>
-    </div>
+    <main class="mobile-only">
+      <section id="viewCenter" class="mobile-view active panel">
+        <div class="panel-head">
+          <div class="panel-kicker">Principal</div>
+          <div class="panel-title">Lobbies e status atual</div>
+          <div class="panel-subtitle">Sua área principal, com foco no estado atual e na ação certa.</div>
+        </div>
+        <div class="panel-body" id="mobileCenterArea"></div>
+      </section>
 
-    <div class="card card-fechados">
-      <h2>3. Lobbies Fechados</h2>
-      <p class="subtitle">Squads lotados prontos para a partida</p>
-      <div id="listaFechados"></div>
-    </div>
+      <section id="viewCreate" class="mobile-view panel">
+        <div class="panel-head">
+          <div class="panel-kicker">Criar</div>
+          <div class="panel-title">Criar como líder</div>
+          <div class="panel-subtitle">Abra seu próprio lobby quando estiver livre.</div>
+        </div>
+        <div class="panel-body" id="mobileCreateArea"></div>
+      </section>
+
+      <section id="viewProfile" class="mobile-view panel">
+        <div class="panel-head">
+          <div class="panel-kicker">Conta</div>
+          <div class="panel-title">Perfil e modo</div>
+          <div class="panel-subtitle">Dados do jogador, troca de modo e login salvo.</div>
+        </div>
+        <div class="panel-body" id="mobileProfileArea"></div>
+      </section>
+    </main>
+
+    <nav class="mobile-tabs">
+      <button class="tab-btn active" data-view="viewCenter">
+        <span class="tab-icon">☰</span>
+        <span>Principal</span>
+      </button>
+      <button class="tab-btn" data-view="viewCreate">
+        <span class="tab-icon">＋</span>
+        <span>Criar</span>
+      </button>
+      <button class="tab-btn" data-view="viewProfile">
+        <span class="tab-icon">◉</span>
+        <span>Perfil</span>
+      </button>
+    </nav>
   </div>
 
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbw9rB_3YUkOpdt_X3lZ_Qq8TlZ_NnsxiT9ynr6nOs4jpDJn_luEBrN1KeZqSvOGLuAf/exec";
     const REFRESH_MS = 3000;
-    const STORAGE_KEY = "codLobbyJogadorAtual";
+    const STORAGE_KEY = "codLobbyJogadorAtualMobile";
 
     let bancoLobbies = [];
     let jogadorAtual = null;
     let acaoEmAndamento = false;
+    let abaLobbies = "formacao";
 
     function mostrarMensagem(texto, tipo = "info") {
       const box = document.getElementById("messageBox");
       box.className = "message-box";
-      box.style.display = "block";
 
       if (tipo === "success") box.classList.add("message-success");
       if (tipo === "error") box.classList.add("message-error");
       if (tipo === "info") box.classList.add("message-info");
 
+      box.style.display = "block";
       box.textContent = texto;
 
       clearTimeout(window.__msgTimer);
       window.__msgTimer = setTimeout(() => {
+        box.className = "message-box";
         box.style.display = "none";
       }, 4500);
     }
@@ -492,14 +880,8 @@
           plataforma: normalizarTexto(dados.plataforma),
           tipoJogo: normalizarTexto(dados.tipoJogo || "")
         };
-
-        document.getElementById("activisionId").value = jogadorAtual.id;
-        document.getElementById("plataforma").value = jogadorAtual.plataforma;
-        if (jogadorAtual.tipoJogo) {
-          document.getElementById("tipoJogo").value = jogadorAtual.tipoJogo;
-        }
       } catch (e) {
-        console.warn("Não foi possível restaurar sessão local.", e);
+        console.warn("Não foi possível restaurar sessão.", e);
       }
     }
 
@@ -552,10 +934,8 @@
         .filter(lobby => contarJogadoresValidos(lobby.players) > 0)
         .filter(lobby => {
           if (!jogadorAtual || !jogadorAtual.tipoJogo) return true;
-
           const lobbyDoJogador = lobby.players.some(p => idsIguais(p.nome, jogadorAtual.id));
           if (lobbyDoJogador) return true;
-
           return normalizarTexto(lobby.modo) === normalizarTexto(jogadorAtual.tipoJogo);
         });
     }
@@ -579,44 +959,155 @@
              (restante === null || restante > 0);
     }
 
-    function temLobbyDisponivelParaEntrar() {
-      return bancoLobbies.some(lobby => lobbyValidoParaEntrar(lobby));
+    function initials(nome) {
+      const base = normalizarTexto(nome || "J");
+      return base.substring(0, 1).toUpperCase();
     }
 
-    function atualizarStatusUsuario() {
-      const statusBox = document.getElementById("userLoggedStatus");
-      const cadastroArea = document.getElementById("cadastroArea");
-      const trocarModoArea = document.getElementById("trocarModoArea");
-      const lobbyAtual = encontrarLobbyDoJogador();
-
-      if (jogadorAtual) {
-        statusBox.style.display = "block";
-        cadastroArea.style.display = "none";
-
-        document.getElementById("loggedName").textContent = jogadorAtual.id;
-        document.getElementById("loggedPlat").textContent = jogadorAtual.plataforma;
-        document.getElementById("loggedModo").textContent = jogadorAtual.tipoJogo || "Nenhum modo selecionado";
-
-        trocarModoArea.style.display = lobbyAtual ? "none" : "block";
-      } else {
-        statusBox.style.display = "none";
-        cadastroArea.style.display = "block";
+    function atualizarTopbar() {
+      const topbarStatus = document.getElementById("topbarStatus");
+      if (!jogadorAtual) {
+        topbarStatus.textContent = "Visitante";
+        return;
       }
+      const textoModo = jogadorAtual.tipoJogo ? ` • ${jogadorAtual.tipoJogo}` : "";
+      topbarStatus.textContent = `${jogadorAtual.id}${textoModo}`;
+    }
+
+    function estaEditandoFormulario() {
+      const el = document.activeElement;
+      if (!el) return false;
+      return ["INPUT", "SELECT", "TEXTAREA"].includes(el.tagName);
     }
 
     async function carregarDadosPlanilha(exibirErro = true) {
       try {
         bancoLobbies = await fetchLobbies();
-        renderizarLobbies();
+        renderizarTudo();
       } catch (erro) {
         console.error("Erro ao puxar dados:", erro);
         if (exibirErro) {
           mostrarMensagem("Não foi possível carregar os lobbies.", "error");
         }
-        document.getElementById("listaEmFormacao").innerHTML =
-          '<p class="empty-message">Erro ao carregar lobbies.</p>';
-        document.getElementById("listaFechados").innerHTML = "";
       }
+    }
+
+    function htmlLoginCard() {
+      return `
+        <div class="hero">
+          <h2>Entre uma vez e use por cliques</h2>
+          <p>Seu ID da Activision fica salvo para as próximas visitas. Depois disso, tudo fica concentrado em poucos toques.</p>
+        </div>
+
+        <div class="card stack">
+          <div class="field">
+            <label for="activisionId">ID da Activision</label>
+            <input class="input" type="text" id="activisionId" placeholder="Ex: joao#12345" />
+          </div>
+
+          <div class="field">
+            <label for="plataforma">Plataforma</label>
+            <select class="select" id="plataforma">
+              <option value="" selected disabled>Selecione...</option>
+              <option value="PC">PC</option>
+              <option value="PlayStation">PlayStation</option>
+              <option value="Xbox">Xbox</option>
+              <option value="Console">Console</option>
+              <option value="Crossplay">Crossplay</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="tipoJogo">Modo inicial</label>
+            <select class="select" id="tipoJogo">
+              <option value="" selected disabled>Selecione o modo...</option>
+              <option value="Battle Royale">Battle Royale</option>
+              <option value="Ressurgência">Ressurgência</option>
+              <option value="Casual Battle Royale">Casual Battle Royale</option>
+              <option value="Casual Ressurgência">Casual Ressurgência</option>
+              <option value="Ranked Play">Ranked Play</option>
+              <option value="Multiplayer">Multiplayer</option>
+            </select>
+          </div>
+
+          <button class="btn btn-primary" onclick="processarCadastro()">Entrar e buscar lobbies</button>
+        </div>
+      `;
+    }
+
+    function htmlProfileArea() {
+      if (!jogadorAtual) {
+        return htmlLoginCard();
+      }
+
+      const lobbyAtual = encontrarLobbyDoJogador();
+
+      return `
+        <div class="profile-card">
+          <div class="identity">
+            <div class="avatar">${initials(jogadorAtual.id)}</div>
+            <div>
+              <h3>${jogadorAtual.id}</h3>
+              <p>${jogadorAtual.plataforma}${lobbyAtual ? " • Em lobby" : " • Livre"}</p>
+            </div>
+          </div>
+
+          <div class="info-grid">
+            <div class="info-row"><span>Modo atual</span><strong>${jogadorAtual.tipoJogo || "Não definido"}</strong></div>
+            <div class="info-row"><span>Status</span><strong>${lobbyAtual ? `Lobby #${lobbyAtual.idLobby}` : "Sem lobby ativo"}</strong></div>
+          </div>
+
+          ${lobbyAtual ? `
+            <div class="hint">Você está em um lobby. A troca de modo fica liberada somente depois de sair dele na área principal.</div>
+          ` : `
+            <div class="card stack">
+              <div class="field">
+                <label for="modoDepoisDeSair">Escolha outro modo</label>
+                <select class="select" id="modoDepoisDeSair">
+                  <option value="Battle Royale" ${jogadorAtual.tipoJogo === "Battle Royale" ? "selected" : ""}>Battle Royale</option>
+                  <option value="Ressurgência" ${jogadorAtual.tipoJogo === "Ressurgência" ? "selected" : ""}>Ressurgência</option>
+                  <option value="Casual Battle Royale" ${jogadorAtual.tipoJogo === "Casual Battle Royale" ? "selected" : ""}>Casual Battle Royale</option>
+                  <option value="Casual Ressurgência" ${jogadorAtual.tipoJogo === "Casual Ressurgência" ? "selected" : ""}>Casual Ressurgência</option>
+                  <option value="Ranked Play" ${jogadorAtual.tipoJogo === "Ranked Play" ? "selected" : ""}>Ranked Play</option>
+                  <option value="Multiplayer" ${jogadorAtual.tipoJogo === "Multiplayer" ? "selected" : ""}>Multiplayer</option>
+                </select>
+              </div>
+              <button class="btn btn-secondary" onclick="confirmarNovoModo()">Trocar modo</button>
+            </div>
+          `}
+
+          <button class="btn btn-danger" onclick="fazerLogout()">Sair desta conta</button>
+        </div>
+      `;
+    }
+
+    function renderPlayerName(player, posicao) {
+      if (!isFilled(player.nome)) {
+        return `
+          <div class="player empty">
+            <div class="player-left"><span>Jogador ${posicao}</span></div>
+            <div class="player-right"><span>Vaga aberta</span></div>
+          </div>
+        `;
+      }
+
+      let plataformaFinal = player.plat || "";
+      if (jogadorAtual && idsIguais(player.nome, jogadorAtual.id)) {
+        plataformaFinal = jogadorAtual.plataforma || plataformaFinal;
+      }
+
+      return `
+        <div class="player ${posicao === 1 ? "lider" : ""}">
+          <div class="player-left">
+            <span>Jogador ${posicao}</span>
+            ${posicao === 1 ? '<span class="role">LÍDER</span>' : ''}
+          </div>
+          <div class="player-right">
+            <strong>${player.nome}</strong>
+            ${plataformaFinal ? `<span class="badge">${plataformaFinal}</span>` : ""}
+          </div>
+        </div>
+      `;
     }
 
     function renderizarAvisoLider(lobby, esteEhOLobbyDoJogador, lotado) {
@@ -624,54 +1115,356 @@
       if (!lider) return "";
 
       if (!lotado && jogadorAtual && esteEhOLobbyDoJogador && jogadorEhLider(lobby)) {
-        return `
-          <div class="host-box">
-            Você é o líder deste lobby em formação. Abra agora o grupo no jogo e aguarde os outros jogadores entrarem pelo seu ID.
-          </div>
-        `;
+        return `<div class="hint">Você é o líder deste lobby em formação. Abra o grupo no jogo e aguarde os demais entrarem pelo seu ID.</div>`;
       }
 
       if (!lotado) return "";
 
       if (!jogadorAtual || !esteEhOLobbyDoJogador) {
-        return `
-          <div class="host-box">
-            Líder do lobby: <strong>${lider}</strong>. Agora adicione o líder para entrar na partida.
-          </div>
-        `;
+        return `<div class="hint">Líder do lobby: <strong>${lider}</strong>. Agora adicione o líder para entrar na partida.</div>`;
       }
 
       if (jogadorEhLider(lobby)) {
-        return `
-          <div class="host-box">
-            Você é o líder deste lobby fechado. Abra o grupo/squad no jogo para os demais entrarem.
-          </div>
-        `;
+        return `<div class="hint">Você é o líder deste lobby fechado. Abra o grupo/squad no jogo para os demais entrarem.</div>`;
+      }
+
+      return `<div class="hint">Lobby fechado. Agora adicione o ID do líder <strong>${lider}</strong> para entrar na partida.</div>`;
+    }
+
+    function renderLobbyCard(lobby, index) {
+      const totalPlayers = contarJogadoresValidos(lobby.players);
+      const lotado = totalPlayers >= lobby.max || lobby.status === "Fechado";
+      const lobbyDoJogador = encontrarLobbyDoJogador();
+      const esteEhOLobbyDoJogador = lobbyDoJogador && lobby.idLobby === lobbyDoJogador.idLobby;
+      const restante = obterTempoRestante(lobby);
+
+      if (restante !== null && restante <= 0) return "";
+
+      let playersHtml = "";
+      for (let i = 0; i < 4; i++) {
+        const player = lobby.players[i] || { nome: "", plat: "" };
+        playersHtml += renderPlayerName(player, i + 1);
+      }
+
+      let botaoAcao = "";
+      if (jogadorAtual) {
+        if (esteEhOLobbyDoJogador) {
+          botaoAcao = `<button class="btn btn-danger" ${acaoEmAndamento ? "disabled" : ""} onclick="sairDoLobby(${index})">Sair do lobby</button>`;
+        } else if (!lobbyDoJogador && !lotado && lobbyValidoParaEntrar(lobby) && !acaoEmAndamento) {
+          botaoAcao = `<button class="btn btn-success" onclick="entrarNoLobby(${index})">Entrar no lobby</button>`;
+        }
       }
 
       return `
-        <div class="host-box">
-          Lobby fechado. Agora adicione o ID do líder <strong>${lider}</strong> para entrar na partida.
+        <article class="lobby-card">
+          <div class="lobby-head">
+            <div>
+              <div class="lobby-title ${lotado ? "mode-closed" : "mode-open"}">${lobby.modo}</div>
+              <div class="meta">
+                <span class="badge">Lobby #${lobby.idLobby}</span>
+                <span class="badge">${totalPlayers}/4</span>
+                ${restante !== null ? `<span class="badge badge-yellow js-timer" data-lobby-id="${lobby.idLobby}">${lotado ? "Tempo restante" : "Expira em"}: ${formatarTempo(restante)}</span>` : ""}
+              </div>
+            </div>
+          </div>
+
+          <div class="players">${playersHtml}</div>
+
+          ${renderizarAvisoLider(lobby, esteEhOLobbyDoJogador, lotado)}
+          ${botaoAcao ? `<div style="margin-top:12px;">${botaoAcao}</div>` : ""}
+        </article>
+      `;
+    }
+
+    function htmlCurrentLobbyCard(lobbyAtual) {
+      const totalPlayers = contarJogadoresValidos(lobbyAtual.players);
+      const restante = obterTempoRestante(lobbyAtual);
+      let playersHtml = "";
+
+      for (let i = 0; i < 4; i++) {
+        const player = lobbyAtual.players[i] || { nome: "", plat: "" };
+        playersHtml += renderPlayerName(player, i + 1);
+      }
+
+      return `
+        <div class="current-lobby">
+          <div class="current-lobby-head">
+            <div>
+              <h3>Você está no Lobby #${lobbyAtual.idLobby}</h3>
+              <p>Essa é a sua área principal. Para evitar confusão, a ação de sair fica somente aqui.</p>
+              <div class="meta">
+                <span class="badge">${lobbyAtual.modo}</span>
+                <span class="badge">${totalPlayers}/4</span>
+                ${restante !== null ? `<span class="badge badge-yellow js-timer" data-lobby-id="${lobbyAtual.idLobby}">Expira em: ${formatarTempo(restante)}</span>` : ""}
+              </div>
+            </div>
+          </div>
+
+          <div class="players">${playersHtml}</div>
+
+          ${renderizarAvisoLider(lobbyAtual, true, totalPlayers >= lobbyAtual.max || lobbyAtual.status === "Fechado")}
+          <div style="margin-top:12px;">
+            <button class="btn btn-danger" ${acaoEmAndamento ? "disabled" : ""} onclick="sairDoLobbyPorAtual()">Sair do lobby</button>
+          </div>
         </div>
       `;
     }
 
-    function renderPlayerName(player) {
-      if (!isFilled(player.nome)) return `<span>Vaga Aberta</span>`;
+    function htmlCenterArea() {
+      const lobbyAtual = encontrarLobbyDoJogador();
 
-      let plataformaFinal = player.plat || "";
-      if (jogadorAtual && idsIguais(player.nome, jogadorAtual.id)) {
-        plataformaFinal = jogadorAtual.plataforma || plataformaFinal;
+      const emFormacao = bancoLobbies.filter(lobby => {
+        const totalPlayers = contarJogadoresValidos(lobby.players);
+        const lotado = totalPlayers >= lobby.max || lobby.status === "Fechado";
+        const restante = obterTempoRestante(lobby);
+        if (restante !== null && restante <= 0) return false;
+        if (lobbyAtual && lobby.idLobby === lobbyAtual.idLobby) return false;
+        return !lotado;
+      });
+
+      const fechados = bancoLobbies.filter(lobby => {
+        const totalPlayers = contarJogadoresValidos(lobby.players);
+        const lotado = totalPlayers >= lobby.max || lobby.status === "Fechado";
+        const restante = obterTempoRestante(lobby);
+        if (restante !== null && restante <= 0) return false;
+        if (lobbyAtual && lobby.idLobby === lobbyAtual.idLobby) return false;
+        return lotado;
+      });
+
+      const listaAtual = abaLobbies === "formacao" ? emFormacao : fechados;
+
+      let htmlLista = "";
+      if (listaAtual.length === 0) {
+        htmlLista = `
+          <div class="empty-state">
+            <h3>${abaLobbies === "formacao" ? "Nada disponível agora" : "Nenhum lobby fechado"}</h3>
+            <p>${abaLobbies === "formacao"
+              ? "Nenhum lobby em formação apareceu para o modo atual."
+              : "Ainda não há squads fechados para mostrar."}</p>
+          </div>
+        `;
+      } else {
+        htmlLista = listaAtual.map(lobby => {
+          const indiceReal = bancoLobbies.findIndex(item => item.idLobby === lobby.idLobby);
+          return renderLobbyCard(lobby, indiceReal);
+        }).join("");
       }
 
-      const badge = plataformaFinal ? `<span class="plat-badge">${plataformaFinal}</span>` : "";
+      return `
+        <div class="primary-stage">
+          ${lobbyAtual ? htmlCurrentLobbyCard(lobbyAtual) : `
+            <div class="hero">
+              <h2>${jogadorAtual ? "Entre em um lobby ou crie o seu" : "Sua fila rápida começa aqui"}</h2>
+              <p>${jogadorAtual
+                ? "Escolha um lobby disponível abaixo ou vá no painel lateral para criar um novo como líder."
+                : "Faça seu login para ativar o fluxo completo por cliques."}</p>
+            </div>
+          `}
+
+          ${jogadorAtual ? `
+            <div class="card stack">
+              <div class="field">
+                <label for="modoVisualRapido">Modo atual de busca</label>
+                <select class="select" id="modoVisualRapido" onchange="trocaRapidaModo(this.value)">
+                  <option value="Battle Royale" ${jogadorAtual.tipoJogo === "Battle Royale" ? "selected" : ""}>Battle Royale</option>
+                  <option value="Ressurgência" ${jogadorAtual.tipoJogo === "Ressurgência" ? "selected" : ""}>Ressurgência</option>
+                  <option value="Casual Battle Royale" ${jogadorAtual.tipoJogo === "Casual Battle Royale" ? "selected" : ""}>Casual Battle Royale</option>
+                  <option value="Casual Ressurgência" ${jogadorAtual.tipoJogo === "Casual Ressurgência" ? "selected" : ""}>Casual Ressurgência</option>
+                  <option value="Ranked Play" ${jogadorAtual.tipoJogo === "Ranked Play" ? "selected" : ""}>Ranked Play</option>
+                  <option value="Multiplayer" ${jogadorAtual.tipoJogo === "Multiplayer" ? "selected" : ""}>Multiplayer</option>
+                </select>
+              </div>
+            </div>
+          ` : ""}
+
+          <div class="segmented">
+            <button class="${abaLobbies === "formacao" ? "active" : ""}" onclick="definirAbaLobbies('formacao')">Em formação</button>
+            <button class="${abaLobbies === "fechados" ? "active" : ""}" onclick="definirAbaLobbies('fechados')">Fechados</button>
+          </div>
+
+          <div class="list">${htmlLista}</div>
+        </div>
+      `;
+    }
+
+    function htmlCreateArea() {
+      if (!jogadorAtual) {
+        return `
+          <div class="aside-box">
+            <div class="aside-hero">
+              <h3>Ative o fluxo completo</h3>
+              <p>Entre com seu ID para liberar a criação de lobby, manter a conta salva e usar tudo em poucos cliques.</p>
+            </div>
+          </div>
+        `;
+      }
+
+      const lobbyAtual = encontrarLobbyDoJogador();
+
+      if (lobbyAtual) {
+        return `
+          <div class="aside-box">
+            <div class="aside-hero">
+              <h3>Você já está em um lobby</h3>
+              <p>Este painel fica propositalmente simples. A ação de sair aparece somente na área principal.</p>
+            </div>
+
+            <div class="hint">
+              Lobby atual: <strong>#${lobbyAtual.idLobby}</strong>. Depois de sair, este painel volta a mostrar a criação.
+            </div>
+          </div>
+        `;
+      }
 
       return `
-        <span class="player-name">
-          <strong>${player.nome}</strong>
-          ${badge}
-        </span>
+        <div class="aside-box">
+          <div class="aside-hero">
+            <h3>Criar lobby como líder</h3>
+            <p>Seu modo atual é <strong>${jogadorAtual.tipoJogo || "não definido"}</strong>. Se não existir uma formação ideal, abra a sua.</p>
+          </div>
+
+          <div class="card stack">
+            <div class="info-grid">
+              <div class="info-row"><span>Jogador</span><strong>${jogadorAtual.id}</strong></div>
+              <div class="info-row"><span>Plataforma</span><strong>${jogadorAtual.plataforma}</strong></div>
+              <div class="info-row"><span>Modo</span><strong>${jogadorAtual.tipoJogo || "-"}</strong></div>
+            </div>
+
+            <button class="btn btn-success" ${acaoEmAndamento ? "disabled" : ""} onclick="criarNovoLobbyComoLider()">
+              ${acaoEmAndamento ? "Criando..." : "Criar novo lobby"}
+            </button>
+          </div>
+        </div>
       `;
+    }
+
+    function renderizarTudo() {
+      if (estaEditandoFormulario()) return;
+
+      atualizarTopbar();
+
+      const profileHtml = htmlProfileArea();
+      const centerHtml = htmlCenterArea();
+      const createHtml = htmlCreateArea();
+
+      const desktopProfileArea = document.getElementById("desktopProfileArea");
+      const desktopCenterArea = document.getElementById("desktopCenterArea");
+      const desktopCreateArea = document.getElementById("desktopCreateArea");
+      const mobileProfileArea = document.getElementById("mobileProfileArea");
+      const mobileCenterArea = document.getElementById("mobileCenterArea");
+      const mobileCreateArea = document.getElementById("mobileCreateArea");
+
+      if (desktopProfileArea) desktopProfileArea.innerHTML = profileHtml;
+      if (desktopCenterArea) desktopCenterArea.innerHTML = centerHtml;
+      if (desktopCreateArea) desktopCreateArea.innerHTML = createHtml;
+      if (mobileProfileArea) mobileProfileArea.innerHTML = profileHtml;
+      if (mobileCenterArea) mobileCenterArea.innerHTML = centerHtml;
+      if (mobileCreateArea) mobileCreateArea.innerHTML = createHtml;
+    }
+
+    function atualizarTimersVisuais() {
+      document.querySelectorAll(".js-timer").forEach(el => {
+        const lobbyId = Number(el.dataset.lobbyId);
+        const lobby = bancoLobbies.find(l => Number(l.idLobby) === lobbyId);
+        if (!lobby) return;
+
+        const restante = obterTempoRestante(lobby);
+        const totalPlayers = contarJogadoresValidos(lobby.players);
+        const lotado = totalPlayers >= lobby.max || lobby.status === "Fechado";
+
+        if (restante !== null && restante <= 0) {
+          el.textContent = lotado ? "Tempo restante: 00:00" : "Expira em: 00:00";
+          return;
+        }
+
+        if (restante !== null) {
+          el.textContent = `${lotado ? "Tempo restante" : "Expira em"}: ${formatarTempo(restante)}`;
+        }
+      });
+    }
+
+    function definirAbaLobbies(aba) {
+      abaLobbies = aba;
+      renderizarTudo();
+    }
+
+    function processarCadastro() {
+      const activisionId = normalizarTexto(document.getElementById("activisionId")?.value);
+      const plataforma = normalizarTexto(document.getElementById("plataforma")?.value);
+      const tipoJogo = normalizarTexto(document.getElementById("tipoJogo")?.value);
+
+      if (!activisionId || !plataforma || !tipoJogo) {
+        mostrarMensagem("Preencha todos os campos antes de continuar.", "error");
+        return;
+      }
+
+      jogadorAtual = {
+        id: activisionId,
+        plataforma,
+        tipoJogo
+      };
+
+      salvarSessaoJogador();
+      renderizarTudo();
+      carregarDadosPlanilha(false);
+      mostrarMensagem("Cadastro concluído. Agora você pode usar o sistema só por cliques.", "success");
+    }
+
+    function fazerLogout() {
+      const lobbyAtual = encontrarLobbyDoJogador();
+      if (lobbyAtual) {
+        mostrarMensagem("Saia primeiro do lobby antes de trocar de conta.", "error");
+        return;
+      }
+
+      jogadorAtual = null;
+      salvarSessaoJogador();
+      renderizarTudo();
+      mostrarMensagem("Você saiu da conta atual.", "info");
+    }
+
+    function confirmarNovoModo() {
+      if (!jogadorAtual) {
+        mostrarMensagem("Nenhum usuário conectado.", "error");
+        return;
+      }
+
+      if (encontrarLobbyDoJogador()) {
+        mostrarMensagem("Saia do lobby atual antes de trocar o modo.", "error");
+        return;
+      }
+
+      const seletor = document.getElementById("modoDepoisDeSair");
+      const novoModo = normalizarTexto(seletor?.value);
+
+      if (!novoModo) {
+        mostrarMensagem("Escolha um modo de jogo.", "error");
+        return;
+      }
+
+      jogadorAtual.tipoJogo = novoModo;
+      salvarSessaoJogador();
+      abaLobbies = "formacao";
+      renderizarTudo();
+      carregarDadosPlanilha(false);
+      mostrarMensagem(`Modo alterado para ${novoModo}.`, "success");
+    }
+
+    function trocaRapidaModo(novoModo) {
+      if (!jogadorAtual) return;
+
+      if (encontrarLobbyDoJogador()) {
+        mostrarMensagem("Saia do lobby atual antes de trocar o modo.", "error");
+        renderizarTudo();
+        return;
+      }
+
+      jogadorAtual.tipoJogo = normalizarTexto(novoModo);
+      salvarSessaoJogador();
+      abaLobbies = "formacao";
+      renderizarTudo();
+      carregarDadosPlanilha(false);
+      mostrarMensagem(`Busca rápida alterada para ${jogadorAtual.tipoJogo}.`, "info");
     }
 
     async function criarNovoLobbyComoLider() {
@@ -690,7 +1483,7 @@
         }
 
         acaoEmAndamento = true;
-        renderizarLobbies();
+        renderizarTudo();
         mostrarMensagem("Criando seu lobby...", "info");
 
         const resultado = await chamarAPI({
@@ -712,208 +1505,8 @@
         mostrarMensagem(`Erro ao criar lobby: ${erro.message}`, "error");
       } finally {
         acaoEmAndamento = false;
-        renderizarLobbies();
+        renderizarTudo();
       }
-    }
-
-    function renderizarEstadoSemLobby() {
-      const emFormacao = document.getElementById("listaEmFormacao");
-      if (!jogadorAtual) return;
-
-      const lobbyDoJogador = encontrarLobbyDoJogador();
-      if (lobbyDoJogador) return;
-      if (temLobbyDisponivelParaEntrar()) return;
-
-      emFormacao.innerHTML = `
-        <div class="squad-card">
-          <div class="squad-header">
-            <div class="squad-mode">${jogadorAtual.tipoJogo || "Novo Lobby"}</div>
-            <div class="squad-slots">Líder</div>
-          </div>
-          <div class="lobby-id">Nenhum lobby em formação disponível</div>
-          <div class="host-box">
-            Você pode aguardar outro jogador criar um lobby ou criar agora o seu próprio lobby em <strong>${jogadorAtual.tipoJogo || "outro modo"}</strong> e virar o líder da formação.
-          </div>
-          <button class="btn-action btn-join" ${acaoEmAndamento ? "disabled" : ""} onclick="criarNovoLobbyComoLider()">
-            ${acaoEmAndamento ? "CRIANDO..." : "CRIAR NOVO LOBBY"}
-          </button>
-        </div>
-      `;
-    }
-
-    function renderizarLobbies() {
-      const emFormacao = document.getElementById("listaEmFormacao");
-      const fechados = document.getElementById("listaFechados");
-
-      emFormacao.innerHTML = "";
-      fechados.innerHTML = "";
-
-      let qtdFormacao = 0;
-      let qtdFechados = 0;
-
-      const lobbyDoJogador = encontrarLobbyDoJogador();
-
-      bancoLobbies.forEach((lobby, index) => {
-        const totalPlayers = contarJogadoresValidos(lobby.players);
-        const lotado = totalPlayers >= lobby.max || lobby.status === "Fechado";
-        const esteEhOLobbyDoJogador = lobbyDoJogador && lobby.idLobby === lobbyDoJogador.idLobby;
-        const lider = obterLider(lobby);
-        const restante = obterTempoRestante(lobby);
-
-        if (restante !== null && restante <= 0) return;
-        if (!lotado && !lobbyValidoParaEntrar(lobby) && !esteEhOLobbyDoJogador) return;
-
-        let slotsHtml = "";
-        for (let i = 0; i < 4; i++) {
-          const player = lobby.players[i] || { nome: "", plat: "" };
-
-          if (isFilled(player.nome)) {
-            const liderClasse = i === 0 ? "lider" : "";
-            const marcadorLider = i === 0 ? `<span class="player-role">LÍDER</span>` : "";
-            slotsHtml += `
-              <div class="player-slot ${liderClasse}">
-                <span>Jogador ${i + 1} ${marcadorLider}</span>
-                ${renderPlayerName(player)}
-              </div>
-            `;
-          } else {
-            slotsHtml += `
-              <div class="player-slot empty">
-                <span>Jogador ${i + 1}</span>
-                <span>Vaga Aberta</span>
-              </div>
-            `;
-          }
-        }
-
-        let timerHtml = "";
-        if (restante !== null) {
-          timerHtml = `
-            <div class="timer-wrap">
-              <span class="timer-badge">
-                ${lotado ? "Tempo restante" : "Expira em"}: ${formatarTempo(restante)}
-              </span>
-            </div>
-          `;
-        }
-
-        let botaoAcao = "";
-        if (jogadorAtual) {
-          if (esteEhOLobbyDoJogador) {
-            botaoAcao = `<button class="btn-action btn-leave" ${acaoEmAndamento ? "disabled" : ""} onclick="sairDoLobby(${index})">Sair do Lobby</button>`;
-          } else if (!lobbyDoJogador && !lotado && lobbyValidoParaEntrar(lobby) && !acaoEmAndamento) {
-            botaoAcao = `<button class="btn-action btn-join" onclick="entrarNoLobby(${index})">Entrar no Lobby</button>`;
-          }
-        }
-
-        const card = `
-          <div class="squad-card">
-            <div class="squad-header">
-              <div class="squad-mode">${lobby.modo}</div>
-              <div class="squad-slots">${totalPlayers}/4</div>
-            </div>
-            <div class="lobby-id">Lobby: ${lobby.idLobby}</div>
-            ${timerHtml}
-            ${slotsHtml}
-            ${lider ? renderizarAvisoLider(lobby, esteEhOLobbyDoJogador, lotado) : ""}
-            ${botaoAcao}
-          </div>
-        `;
-
-        if (lotado) {
-          qtdFechados++;
-          fechados.innerHTML += card;
-        } else {
-          qtdFormacao++;
-          emFormacao.innerHTML += card;
-        }
-      });
-
-      if (qtdFormacao === 0) {
-        if (jogadorAtual) {
-          renderizarEstadoSemLobby();
-        } else {
-          emFormacao.innerHTML = '<p class="empty-message">Nenhum lobby em formação.</p>';
-        }
-      }
-
-      if (qtdFechados === 0) {
-        fechados.innerHTML = '<p class="empty-message">Nenhum lobby fechado no momento.</p>';
-      }
-
-      atualizarStatusUsuario();
-    }
-
-    function processarCadastro() {
-      const activisionId = normalizarTexto(document.getElementById("activisionId").value);
-      const plataforma = normalizarTexto(document.getElementById("plataforma").value);
-      const tipoJogo = normalizarTexto(document.getElementById("tipoJogo").value);
-
-      if (!activisionId || !plataforma || !tipoJogo) {
-        mostrarMensagem("Preencha todos os campos antes de continuar.", "error");
-        return;
-      }
-
-      jogadorAtual = {
-        id: activisionId,
-        plataforma,
-        tipoJogo
-      };
-
-      salvarSessaoJogador();
-      document.getElementById("loggedModo").textContent = tipoJogo;
-      carregarDadosPlanilha(false);
-      renderizarLobbies();
-      mostrarMensagem("Cadastro realizado. Agora você pode entrar em uma formação existente ou criar a sua.", "success");
-    }
-
-    function confirmarNovoModo() {
-      if (!jogadorAtual) {
-        mostrarMensagem("Nenhum usuário está conectado.", "error");
-        return;
-      }
-
-      if (encontrarLobbyDoJogador()) {
-        mostrarMensagem("Você precisa sair do lobby atual primeiro.", "error");
-        return;
-      }
-
-      const seletor = document.getElementById("modoDepoisDeSair");
-      const novoModo = normalizarTexto(seletor.value);
-
-      if (!novoModo) {
-        mostrarMensagem("Escolha um modo de jogo.", "error");
-        return;
-      }
-
-      jogadorAtual.tipoJogo = novoModo;
-      salvarSessaoJogador();
-
-      document.getElementById("tipoJogo").value = novoModo;
-      document.getElementById("loggedModo").textContent = novoModo;
-
-      carregarDadosPlanilha(false);
-      renderizarLobbies();
-      mostrarMensagem(`Modo alterado para ${novoModo}. Agora você pode entrar em outro lobby ou criar o seu como líder.`, "success");
-    }
-
-    function fazerLogout() {
-      const lobbyAtual = encontrarLobbyDoJogador();
-      if (lobbyAtual) {
-        mostrarMensagem("Saia primeiro do lobby antes de trocar de conta.", "error");
-        return;
-      }
-
-      jogadorAtual = null;
-      salvarSessaoJogador();
-
-      document.getElementById("activisionId").value = "";
-      document.getElementById("plataforma").selectedIndex = 0;
-      document.getElementById("tipoJogo").selectedIndex = 0;
-      document.getElementById("modoDepoisDeSair").selectedIndex = 0;
-
-      renderizarLobbies();
-      mostrarMensagem("Você saiu da conta atual.", "info");
     }
 
     async function entrarNoLobby(index) {
@@ -921,7 +1514,7 @@
 
       try {
         if (!jogadorAtual) {
-          mostrarMensagem("Faça seu registro antes.", "error");
+          mostrarMensagem("Faça seu cadastro primeiro.", "error");
           return;
         }
 
@@ -939,7 +1532,7 @@
         }
 
         acaoEmAndamento = true;
-        renderizarLobbies();
+        renderizarTudo();
         mostrarMensagem("Verificando vaga em tempo real...", "info");
 
         const resultado = await chamarAPI({
@@ -964,7 +1557,7 @@
         await carregarDadosPlanilha(false);
       } finally {
         acaoEmAndamento = false;
-        renderizarLobbies();
+        renderizarTudo();
       }
     }
 
@@ -978,7 +1571,7 @@
         }
 
         acaoEmAndamento = true;
-        renderizarLobbies();
+        renderizarTudo();
 
         const lobby = bancoLobbies[index];
         if (!lobby) {
@@ -999,34 +1592,56 @@
         }
 
         await carregarDadosPlanilha(false);
-        mostrarMensagem(
-          "Você saiu do lobby. Agora pode escolher outro modo, entrar em outro lobby ou criar o seu como líder.",
-          "success"
-        );
+        mostrarMensagem("Você saiu do lobby. Agora pode trocar o modo, entrar em outro ou criar o seu como líder.", "success");
       } catch (erro) {
         console.error("Erro ao sair do lobby:", erro);
         mostrarMensagem("Não foi possível sair do lobby.", "error");
         await carregarDadosPlanilha(false);
       } finally {
         acaoEmAndamento = false;
-        renderizarLobbies();
+        renderizarTudo();
       }
+    }
+
+    function sairDoLobbyPorAtual() {
+      const lobbyAtual = encontrarLobbyDoJogador();
+      if (!lobbyAtual) return;
+      const index = bancoLobbies.findIndex(l => l.idLobby === lobbyAtual.idLobby);
+      if (index >= 0) sairDoLobby(index);
+    }
+
+    function configurarTabsMobile() {
+      const tabs = document.querySelectorAll(".tab-btn");
+      const views = document.querySelectorAll(".mobile-view");
+
+      tabs.forEach(tab => {
+        tab.addEventListener("click", () => {
+          const alvo = tab.dataset.view;
+          tabs.forEach(t => t.classList.remove("active"));
+          views.forEach(v => v.classList.remove("active"));
+          tab.classList.add("active");
+          document.getElementById(alvo)?.classList.add("active");
+        });
+      });
     }
 
     async function iniciarAplicacao() {
       restaurarSessaoJogador();
-      atualizarStatusUsuario();
+      configurarTabsMobile();
+      renderizarTudo();
       await carregarDadosPlanilha(false);
     }
 
     iniciarAplicacao();
 
     setInterval(() => {
-      renderizarLobbies();
+      atualizarTimersVisuais();
     }, 1000);
 
     setInterval(async () => {
-      await carregarDadosPlanilha(false);
+      if (!estaEditandoFormulario()) {
+        await carregarDadosPlanilha(false);
+      }
     }, REFRESH_MS);
   </script>
 </body>
