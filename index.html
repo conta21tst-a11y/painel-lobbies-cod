@@ -2,73 +2,83 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>COD Squad Mobile</title>
   <style>
     :root {
-      --bg: #06080d;
-      --bg-soft: #0b1018;
-      --surface: rgba(15, 20, 31, 0.84);
-      --surface-2: rgba(21, 28, 40, 0.96);
-      --surface-3: rgba(255, 255, 255, 0.03);
-      --border: rgba(255, 255, 255, 0.08);
-      --border-soft: rgba(255, 255, 255, 0.05);
-      --text: #eef3ff;
-      --muted: #8b97b6;
-      --muted-2: #66708c;
-      --yellow: #f4c63d;
-      --yellow-2: #ffdc70;
-      --green: #33d17a;
-      --red: #ff6161;
-      --blue: #5da6ff;
-      --shadow: 0 24px 70px rgba(0,0,0,.42);
-      --radius-xl: 28px;
-      --radius-lg: 20px;
-      --radius-md: 16px;
+      --bg: #060910;
+      --bg-2: #0c1220;
+      --card: #101826;
+      --card-2: #132033;
+      --line: rgba(255, 255, 255, 0.08);
+      --text: #edf2ff;
+      --muted: #96a3c2;
+      --yellow: #f4c430;
+      --green: #2fd37a;
+      --red: #ff625c;
+      --blue: #5ea6ff;
+      --pill: #1a2538;
+      --shadow: 0 16px 40px rgba(0, 0, 0, 0.38);
+      --radius-xl: 24px;
+      --radius-lg: 18px;
+      --radius-md: 14px;
       --radius-sm: 12px;
-      --max: 1380px;
+      --tab-h: 82px;
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --max: 1280px;
     }
 
     * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       -webkit-tap-highlight-color: transparent;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     }
 
-    html, body {
-      min-height: 100%;
+    html {
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
     }
 
     body {
+      min-height: 100vh;
       color: var(--text);
       background:
-        radial-gradient(circle at 15% 0%, rgba(244,198,61,.08), transparent 18%),
-        radial-gradient(circle at 50% 0%, rgba(93,166,255,.10), transparent 30%),
-        linear-gradient(180deg, #05070b 0%, #070b12 42%, #05070b 100%);
+        radial-gradient(circle at top left, rgba(244,196,48,.08), transparent 16%),
+        radial-gradient(circle at top center, rgba(94,166,255,.08), transparent 24%),
+        linear-gradient(180deg, #05080f 0%, #04070c 100%);
+      overflow-x: hidden;
     }
 
-    button, input, select {
+    button, input, select, textarea {
       font: inherit;
     }
 
-    .app {
+    .app-shell {
       max-width: var(--max);
       margin: 0 auto;
       min-height: 100vh;
-      padding: 18px;
-      padding-bottom: 96px;
+      padding-bottom: calc(var(--tab-h) + var(--safe-bottom) + 18px);
     }
 
     .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(14px);
+      background: rgba(7, 11, 18, 0.9);
+      border-bottom: 1px solid rgba(255,255,255,.05);
+    }
+
+    .topbar-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 14px 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
-      padding-bottom: 16px;
-      margin-bottom: 16px;
-      border-bottom: 1px solid var(--border-soft);
+      gap: 10px;
     }
 
     .brand {
@@ -78,131 +88,164 @@
       min-width: 0;
     }
 
-    .brand-icon {
-      width: 46px;
-      height: 46px;
-      border-radius: 16px;
+    .brand-badge {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
       display: grid;
       place-items: center;
-      background: linear-gradient(180deg, #f8cf58, #d6a71b);
-      color: #131821;
+      background: linear-gradient(135deg, #f4c430, #cfab24);
+      color: #101319;
       font-weight: 900;
-      box-shadow: 0 16px 38px rgba(244,198,61,.2);
-      flex: 0 0 auto;
+      box-shadow: var(--shadow);
+      flex-shrink: 0;
     }
 
-    .brand-copy h1 {
-      font-size: 24px;
-      line-height: 1;
-      font-weight: 900;
-      letter-spacing: -.3px;
+    .brand-text h1 {
+      font-size: 16px;
+      line-height: 1.1;
+      letter-spacing: .2px;
     }
 
-    .brand-copy p {
+    .brand-text p {
       font-size: 12px;
       color: var(--muted);
-      margin-top: 5px;
-      line-height: 1.4;
+      margin-top: 2px;
+      line-height: 1.35;
     }
 
-    .status-pill {
-      padding: 10px 14px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
+    .topbar-status {
+      border: 1px solid rgba(255,255,255,.06);
       background: rgba(255,255,255,.03);
       color: var(--muted);
-      font-size: 12px;
+      min-height: 40px;
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+      border-radius: 999px;
+      font-size: 13px;
       white-space: nowrap;
+      flex-shrink: 0;
+      max-width: 42vw;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .message-wrap {
+      padding: 12px 12px 0;
+      position: relative;
+      z-index: 5;
     }
 
     .message-box {
       display: none;
-      margin-bottom: 16px;
       padding: 14px 16px;
       border-radius: 16px;
-      border: 1px solid var(--border);
       font-size: 14px;
+      border: 1px solid rgba(255,255,255,.06);
     }
 
     .message-success {
       display: block;
-      background: rgba(51,209,122,.12);
-      border-color: rgba(51,209,122,.28);
-      color: #8ff0b8;
+      background: rgba(47,211,122,.12);
+      border-color: rgba(47,211,122,.26);
+      color: #95f0bf;
     }
 
     .message-error {
       display: block;
-      background: rgba(255,97,97,.12);
-      border-color: rgba(255,97,97,.28);
-      color: #ffb3b3;
+      background: rgba(255,98,92,.12);
+      border-color: rgba(255,98,92,.28);
+      color: #ffb3af;
     }
 
     .message-info {
       display: block;
-      background: rgba(244,198,61,.10);
-      border-color: rgba(244,198,61,.25);
-      color: #f5dd8b;
+      background: rgba(244,196,48,.1);
+      border-color: rgba(244,196,48,.24);
+      color: #f6db7a;
     }
 
-    .desktop-layout {
-      display: grid;
-      grid-template-columns: 300px minmax(0, 1fr);
-      gap: 18px;
-      align-items: start;
+    .container {
+      padding: 12px;
+      position: relative;
+      z-index: 1;
     }
 
-    .sidebar {
+    .desktop-grid {
       display: grid;
-      gap: 18px;
-      position: sticky;
-      top: 18px;
-    }
-
-    .main-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1.45fr) minmax(280px, .8fr);
+      grid-template-columns: 1fr 1.35fr 1fr;
       gap: 18px;
       align-items: start;
     }
 
     .panel {
       background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
-      border: 1px solid var(--border);
+      border: 1px solid rgba(255,255,255,.06);
       border-radius: var(--radius-xl);
-      overflow: hidden;
       box-shadow: var(--shadow);
-      backdrop-filter: blur(16px);
+      overflow: hidden;
     }
 
     .panel-head {
       padding: 18px 18px 12px;
-      border-bottom: 1px solid var(--border-soft);
+      border-bottom: 1px solid rgba(255,255,255,.05);
     }
 
     .panel-kicker {
       font-size: 11px;
-      letter-spacing: 1px;
       text-transform: uppercase;
+      letter-spacing: 1px;
       color: var(--muted);
       margin-bottom: 8px;
     }
 
     .panel-title {
-      font-size: 18px;
+      font-size: 20px;
+      font-weight: 800;
       line-height: 1.1;
-      font-weight: 900;
-      margin-bottom: 6px;
     }
 
     .panel-subtitle {
-      color: var(--muted);
       font-size: 13px;
-      line-height: 1.5;
+      color: var(--muted);
+      margin-top: 6px;
+      line-height: 1.45;
     }
 
     .panel-body {
       padding: 16px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-card {
+      background: linear-gradient(180deg, rgba(244,196,48,.09), rgba(255,255,255,.02));
+      border: 1px solid rgba(244,196,48,.14);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    .hero-card h2 {
+      font-size: 19px;
+      line-height: 1.15;
+      margin-bottom: 8px;
+    }
+
+    .hero-card p {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.012));
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: var(--radius-lg);
+      padding: 14px;
+      position: relative;
+      z-index: 3;
     }
 
     .stack {
@@ -210,71 +253,57 @@
       gap: 14px;
     }
 
-    .hero {
-      border-radius: 20px;
-      padding: 16px;
-      background: linear-gradient(180deg, rgba(244,198,61,.12), rgba(255,255,255,.02));
-      border: 1px solid rgba(244,198,61,.16);
-    }
-
-    .hero h2 {
-      font-size: 22px;
-      line-height: 1.08;
-      font-weight: 900;
-      margin-bottom: 8px;
-    }
-
-    .hero p {
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.55;
-    }
-
-    .card {
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 14px;
-    }
-
     .field {
       display: grid;
-      gap: 6px;
+      gap: 7px;
+      position: relative;
+      z-index: 4;
     }
 
     .field label {
       font-size: 13px;
-      color: #d8e3ff;
-      font-weight: 800;
+      font-weight: 700;
+      color: #d4def9;
     }
 
     .input, .select {
       width: 100%;
       min-height: 52px;
-      background: #0b1119;
+      background: #07101b;
       color: var(--text);
-      border: 1px solid rgba(255,255,255,.09);
+      border: 1px solid rgba(255,255,255,.07);
       border-radius: 14px;
-      padding: 14px;
+      padding: 14px 14px;
       outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+      position: relative;
+      z-index: 5;
+      pointer-events: auto;
+      font-size: 16px;
+    }
+
+    .input::placeholder {
+      color: #667594;
     }
 
     .input:focus, .select:focus {
-      border-color: rgba(244,198,61,.55);
-      box-shadow: 0 0 0 3px rgba(244,198,61,.10);
+      border-color: rgba(244,196,48,.65);
+      box-shadow: 0 0 0 3px rgba(244,196,48,.11);
     }
 
     .btn {
-      width: 100%;
-      min-height: 52px;
       border: none;
       border-radius: 16px;
       padding: 14px 16px;
-      cursor: pointer;
-      font-weight: 900;
+      min-height: 50px;
+      font-weight: 800;
       text-transform: uppercase;
       letter-spacing: .4px;
-      transition: transform .15s ease, opacity .15s ease;
+      cursor: pointer;
+      transition: transform .15s ease, opacity .15s ease, background .15s ease;
+      position: relative;
+      z-index: 4;
     }
 
     .btn:active {
@@ -286,71 +315,50 @@
       cursor: not-allowed;
     }
 
-    .btn-primary {
-      background: linear-gradient(180deg, #ffd34d, #eebb20);
-      color: #11161d;
-    }
-
-    .btn-success {
-      background: linear-gradient(180deg, #41df90, #25bc6d);
-      color: #08140d;
-    }
-
-    .btn-danger {
-      background: linear-gradient(180deg, #ff6b6b, #ff5757);
-      color: #fff;
-    }
-
-    .btn-secondary {
-      background: linear-gradient(180deg, #76b9ff, #4d97ee);
-      color: #07121d;
-    }
+    .btn-primary { background: var(--yellow); color: #101319; }
+    .btn-success { background: var(--green); color: #06150d; }
+    .btn-danger { background: var(--red); color: #fff; }
+    .btn-secondary { background: var(--blue); color: #08131d; }
 
     .btn-ghost {
       background: rgba(255,255,255,.04);
       color: var(--text);
-      border: 1px solid var(--border);
+      border: 1px solid rgba(255,255,255,.06);
     }
 
-    .profile-card {
-      display: grid;
-      gap: 14px;
-    }
-
-    .identity {
+    .quick-user {
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 14px;
-      border-radius: 18px;
+      padding: 12px;
+      border-radius: 16px;
       background: rgba(255,255,255,.02);
-      border: 1px solid var(--border);
+      border: 1px solid rgba(255,255,255,.05);
+      margin-bottom: 14px;
     }
 
     .avatar {
-      width: 54px;
-      height: 54px;
-      border-radius: 18px;
+      width: 46px;
+      height: 46px;
+      border-radius: 15px;
       display: grid;
       place-items: center;
-      background: linear-gradient(180deg, rgba(244,198,61,.18), rgba(255,255,255,.04));
-      border: 1px solid rgba(244,198,61,.2);
+      font-weight: 900;
+      background: linear-gradient(135deg, rgba(244,196,48,.18), rgba(255,255,255,.05));
       color: var(--yellow);
-      font-size: 20px;
-      font-weight: 900;
-      flex: 0 0 auto;
+      border: 1px solid rgba(244,196,48,.18);
+      flex-shrink: 0;
     }
 
-    .identity h3 {
-      font-size: 18px;
-      line-height: 1.1;
-      font-weight: 900;
-      margin-bottom: 4px;
+    .quick-user h3 {
+      font-size: 15px;
+      margin-bottom: 2px;
     }
 
-    .identity p {
-      font-size: 13px;
+    .quick-user p {
+      font-size: 12px;
       color: var(--muted);
+      line-height: 1.35;
     }
 
     .info-grid {
@@ -358,148 +366,94 @@
       gap: 10px;
     }
 
-    .info-row {
+    .info-line {
       display: flex;
       justify-content: space-between;
+      gap: 10px;
       align-items: center;
-      gap: 12px;
-      padding: 12px 13px;
-      border-radius: 14px;
-      background: rgba(255,255,255,.02);
-      border: 1px solid var(--border-soft);
       font-size: 13px;
+      color: #dde6ff;
+      background: rgba(255,255,255,.02);
+      border-radius: 12px;
+      padding: 11px 12px;
     }
 
-    .info-row span:first-child {
+    .info-line span:first-child {
       color: var(--muted);
     }
 
-    .hint {
-      border-radius: 16px;
-      padding: 14px;
-      background: rgba(244,198,61,.10);
-      border: 1px solid rgba(244,198,61,.20);
-      color: #f4dc89;
-      font-size: 13px;
-      line-height: 1.5;
-    }
-
-    .primary-stage {
-      display: grid;
-      gap: 16px;
-    }
-
-    .current-lobby {
-      border-radius: 22px;
-      padding: 18px;
-      background: linear-gradient(180deg, rgba(51,209,122,.12), rgba(255,255,255,.02));
-      border: 1px solid rgba(51,209,122,.20);
-    }
-
-    .current-lobby-head {
+    .section-title {
       display: flex;
+      align-items: center;
       justify-content: space-between;
-      align-items: start;
       gap: 12px;
       margin-bottom: 12px;
     }
 
-    .current-lobby h3 {
-      font-size: 21px;
-      line-height: 1.08;
-      font-weight: 900;
-      margin-bottom: 6px;
-      color: #cffff0;
+    .section-title h3 {
+      font-size: 15px;
+      font-weight: 800;
     }
 
-    .current-lobby p {
-      color: #d7ffe8;
-      font-size: 13px;
-      line-height: 1.5;
-    }
-
-    .meta {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-top: 8px;
-    }
-
-    .badge {
-      padding: 5px 9px;
-      border-radius: 999px;
-      font-size: 11px;
-      font-weight: 900;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.05);
-      color: #dce5ff;
-      white-space: nowrap;
-    }
-
-    .badge-yellow {
-      background: rgba(244,198,61,.12);
-      border-color: rgba(244,198,61,.18);
-      color: #f4dc89;
-    }
-
-    .segmented {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      padding: 6px;
-      border-radius: 18px;
-      background: rgba(255,255,255,.03);
-      border: 1px solid var(--border);
-    }
-
-    .segmented button {
-      min-height: 48px;
-      border: none;
-      border-radius: 13px;
-      background: transparent;
+    .section-title p {
+      font-size: 12px;
       color: var(--muted);
-      font-weight: 900;
-      cursor: pointer;
-      padding: 0 12px;
-    }
-
-    .segmented button.active {
-      background: rgba(255,255,255,.08);
-      color: var(--text);
     }
 
     .list {
       display: grid;
-      gap: 14px;
+      gap: 12px;
     }
 
     .lobby-card {
-      border-radius: 20px;
-      padding: 16px;
-      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
-      border: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255,255,255,.025), rgba(255,255,255,.015));
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 18px;
+      padding: 14px;
+    }
+
+    .lobby-card.current {
+      border-color: rgba(47,211,122,.28);
+      background: linear-gradient(180deg, rgba(47,211,122,.11), rgba(255,255,255,.02));
     }
 
     .lobby-head {
       display: flex;
       justify-content: space-between;
       align-items: start;
-      gap: 12px;
-      margin-bottom: 12px;
+      gap: 10px;
+      margin-bottom: 10px;
     }
 
-    .lobby-title {
+    .lobby-mode {
       font-size: 17px;
+      font-weight: 800;
       line-height: 1.1;
-      font-weight: 900;
     }
 
-    .mode-open {
-      color: var(--green);
+    .mode-open { color: var(--green); }
+    .mode-closed { color: var(--red); }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
     }
 
-    .mode-closed {
-      color: #ff8f8f;
+    .badge {
+      font-size: 11px;
+      padding: 5px 8px;
+      border-radius: 999px;
+      background: var(--pill);
+      color: #dbe5ff;
+      font-weight: 800;
+    }
+
+    .badge-yellow {
+      background: rgba(244,196,48,.11);
+      color: #f7db7a;
+      border: 1px solid rgba(244,196,48,.14);
     }
 
     .players {
@@ -511,36 +465,30 @@
     .player {
       display: flex;
       justify-content: space-between;
-      align-items: center;
       gap: 12px;
-      padding: 11px 12px;
-      border-radius: 14px;
+      align-items: center;
+      padding: 10px 12px;
+      border-radius: 12px;
       background: rgba(255,255,255,.02);
-      border: 1px solid var(--border-soft);
+      border: 1px solid rgba(255,255,255,.04);
       font-size: 13px;
     }
 
     .player.empty {
-      color: var(--muted-2);
+      color: #68748f;
       font-style: italic;
     }
 
     .player.lider {
-      background: rgba(244,198,61,.09);
-      border-color: rgba(244,198,61,.18);
+      border-color: rgba(244,196,48,.18);
+      background: rgba(244,196,48,.08);
     }
 
-    .player-left,
-    .player-right {
+    .player-left {
       display: flex;
-      align-items: center;
       gap: 6px;
+      align-items: center;
       flex-wrap: wrap;
-    }
-
-    .player-right {
-      justify-content: flex-end;
-      text-align: right;
     }
 
     .role {
@@ -548,59 +496,66 @@
       color: var(--yellow);
       font-weight: 900;
       text-transform: uppercase;
-      letter-spacing: .5px;
     }
 
-    .empty-state {
-      text-align: center;
-      padding: 28px 16px;
-      border-radius: 20px;
-      border: 1px dashed rgba(255,255,255,.08);
-      background: rgba(255,255,255,.02);
-      color: var(--muted);
+    .player-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      text-align: right;
     }
 
-    .empty-state h3 {
-      font-size: 18px;
-      font-weight: 900;
-      color: var(--text);
-      margin-bottom: 8px;
-    }
-
-    .aside-box {
-      display: grid;
-      gap: 14px;
-    }
-
-    .aside-hero {
-      border-radius: 20px;
-      padding: 16px;
-      background: linear-gradient(180deg, rgba(93,166,255,.10), rgba(255,255,255,.02));
-      border: 1px solid rgba(93,166,255,.16);
-    }
-
-    .aside-hero h3 {
-      font-size: 19px;
-      line-height: 1.1;
-      font-weight: 900;
-      margin-bottom: 8px;
-    }
-
-    .aside-hero p {
-      color: var(--muted);
+    .hint {
+      margin-top: 12px;
+      border-radius: 14px;
+      padding: 12px;
+      background: rgba(244,196,48,.08);
+      border: 1px solid rgba(244,196,48,.14);
+      color: #f7dc83;
       font-size: 13px;
       line-height: 1.5;
     }
 
-    .mobile-only {
+    .hint-blue {
+      background: rgba(94,166,255,.1);
+      border-color: rgba(94,166,255,.14);
+      color: #bad6ff;
+    }
+
+    .empty-state {
+      padding: 22px 16px;
+      border-radius: 18px;
+      text-align: center;
+      color: var(--muted);
+      border: 1px dashed rgba(255,255,255,.08);
+      background: rgba(255,255,255,.02);
+    }
+
+    .empty-state h3 {
+      color: var(--text);
+      font-size: 17px;
+      margin-bottom: 8px;
+    }
+
+    .divider {
+      height: 1px;
+      background: rgba(255,255,255,.05);
+      margin: 14px 0;
+    }
+
+    .subtle {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .view {
       display: none;
     }
 
-    .mobile-view {
-      display: none;
-    }
-
-    .mobile-view.active {
+    .view.active {
       display: block;
     }
 
@@ -608,30 +563,32 @@
       position: fixed;
       left: 12px;
       right: 12px;
-      bottom: 12px;
-      z-index: 60;
-      display: none;
+      bottom: calc(12px + var(--safe-bottom));
+      z-index: 10;
+      background: rgba(14, 20, 32, .94);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 24px;
+      display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 8px;
       padding: 8px;
-      border-radius: 22px;
-      border: 1px solid var(--border);
-      background: rgba(15, 20, 31, .94);
-      backdrop-filter: blur(16px);
       box-shadow: var(--shadow);
+      pointer-events: auto;
     }
 
     .tab-btn {
-      min-height: 58px;
       border: none;
-      border-radius: 16px;
       background: transparent;
       color: var(--muted);
-      font-size: 11px;
-      font-weight: 900;
+      border-radius: 16px;
+      padding: 12px 8px;
+      min-height: 60px;
       display: grid;
       place-items: center;
-      gap: 5px;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 800;
       cursor: pointer;
     }
 
@@ -645,146 +602,144 @@
       line-height: 1;
     }
 
-    @media (max-width: 1180px) {
-      .desktop-layout {
+    .mobile-only { display: none; }
+    .desktop-only { display: block; }
+    .spacer { height: 8px; }
+
+    @media (max-width: 1024px) {
+      .desktop-grid {
         grid-template-columns: 1fr;
       }
 
-      .sidebar {
-        position: static;
+      .desktop-only { display: none; }
+      .mobile-only { display: block; }
+
+      .container {
+        padding: 12px;
       }
 
-      .main-grid {
-        grid-template-columns: 1fr;
+      .topbar-inner {
+        padding: 12px;
+      }
+
+      .topbar-status {
+        max-width: 38vw;
+        font-size: 12px;
+      }
+
+      .brand-text h1 {
+        font-size: 15px;
+      }
+
+      .brand-text p {
+        font-size: 11px;
       }
     }
 
-    @media (max-width: 920px) {
-      .desktop-only {
+    @media (min-width: 1025px) {
+      .mobile-tabs {
         display: none;
       }
 
-      .mobile-only {
-        display: block;
-      }
-
-      .mobile-tabs {
-        display: grid;
-      }
-    }
-
-    @media (max-width: 640px) {
-      .app {
-        padding: 12px;
-        padding-bottom: 92px;
-      }
-
-      .brand-copy h1 {
-        font-size: 20px;
-      }
-
-      .status-pill {
-        font-size: 11px;
-        padding: 9px 11px;
-      }
-
-      .topbar {
-        align-items: start;
+      .app-shell {
+        padding-bottom: 24px;
       }
     }
   </style>
 </head>
 <body>
-  <div class="app">
+  <div class="app-shell">
     <header class="topbar">
-      <div class="brand">
-        <div class="brand-icon">C</div>
-        <div class="brand-copy">
-          <h1>COD Squad Mobile</h1>
-          <p>Fila rápida para formar e fechar lobbies</p>
+      <div class="topbar-inner">
+        <div class="brand">
+          <div class="brand-badge">C</div>
+          <div class="brand-text">
+            <h1>COD Squad Mobile</h1>
+            <p>Fila rápida para formar e fechar lobbies</p>
+          </div>
         </div>
+        <div id="topbarStatus" class="topbar-status">Visitante</div>
       </div>
-      <div id="topbarStatus" class="status-pill">Visitante</div>
     </header>
 
-    <div id="messageBox" class="message-box"></div>
+    <div class="message-wrap">
+      <div id="messageBox" class="message-box"></div>
+    </div>
 
-    <main class="desktop-only">
-      <div class="desktop-layout">
-        <aside class="sidebar">
+    <main class="container">
+      <div class="desktop-only">
+        <div class="desktop-grid">
           <section class="panel">
             <div class="panel-head">
               <div class="panel-kicker">Conta</div>
-              <div class="panel-title">Perfil e modo</div>
-              <div class="panel-subtitle">Login salvo, troca de modo e saída da conta em um único lugar.</div>
+              <div class="panel-title">Acesso e preferências</div>
+              <div class="panel-subtitle">Login salvo, troca de modo e saída da conta.</div>
             </div>
-            <div class="panel-body" id="desktopProfileArea"></div>
+            <div class="panel-body" id="desktopContaArea"></div>
           </section>
-        </aside>
 
-        <div class="main-grid">
           <section class="panel">
             <div class="panel-head">
-              <div class="panel-kicker">Principal</div>
-              <div class="panel-title">Lobbies e status atual</div>
-              <div class="panel-subtitle">Seu lobby atual aparece primeiro. A ação de sair existe somente aqui para não gerar confusão.</div>
+              <div class="panel-kicker">Lobbies</div>
+              <div class="panel-title">Entrar em uma formação</div>
+              <div class="panel-subtitle">Seu lobby atual aparece primeiro. Depois vêm os lobbies abertos.</div>
             </div>
-            <div class="panel-body" id="desktopCenterArea"></div>
+            <div class="panel-body" id="desktopLobbiesArea"></div>
           </section>
 
           <section class="panel">
             <div class="panel-head">
               <div class="panel-kicker">Criar</div>
-              <div class="panel-title">Criar como líder</div>
-              <div class="panel-subtitle">Um painel enxuto para abrir um novo lobby quando você estiver livre.</div>
+              <div class="panel-title">Abrir novo lobby</div>
+              <div class="panel-subtitle">Crie sua própria formação e vire líder quando estiver livre.</div>
             </div>
-            <div class="panel-body" id="desktopCreateArea"></div>
+            <div class="panel-body" id="desktopCriarArea"></div>
           </section>
         </div>
       </div>
-    </main>
 
-    <main class="mobile-only">
-      <section id="viewCenter" class="mobile-view active panel">
-        <div class="panel-head">
-          <div class="panel-kicker">Principal</div>
-          <div class="panel-title">Lobbies e status atual</div>
-          <div class="panel-subtitle">Sua área principal, com foco no estado atual e na ação certa.</div>
-        </div>
-        <div class="panel-body" id="mobileCenterArea"></div>
-      </section>
+      <div class="mobile-only">
+        <section id="viewLobbies" class="view active panel">
+          <div class="panel-head">
+            <div class="panel-kicker">Lobbies</div>
+            <div class="panel-title">Entrar em uma formação</div>
+            <div class="panel-subtitle">Seu lobby atual aparece primeiro. Depois vêm os lobbies disponíveis.</div>
+          </div>
+          <div class="panel-body" id="mobileLobbiesArea"></div>
+        </section>
 
-      <section id="viewCreate" class="mobile-view panel">
-        <div class="panel-head">
-          <div class="panel-kicker">Criar</div>
-          <div class="panel-title">Criar como líder</div>
-          <div class="panel-subtitle">Abra seu próprio lobby quando estiver livre.</div>
-        </div>
-        <div class="panel-body" id="mobileCreateArea"></div>
-      </section>
+        <section id="viewCriar" class="view panel">
+          <div class="panel-head">
+            <div class="panel-kicker">Criar</div>
+            <div class="panel-title">Criar como líder</div>
+            <div class="panel-subtitle">Abra seu próprio lobby quando estiver livre.</div>
+          </div>
+          <div class="panel-body" id="mobileCriarArea"></div>
+        </section>
 
-      <section id="viewProfile" class="mobile-view panel">
-        <div class="panel-head">
-          <div class="panel-kicker">Conta</div>
-          <div class="panel-title">Perfil e modo</div>
-          <div class="panel-subtitle">Dados do jogador, troca de modo e login salvo.</div>
-        </div>
-        <div class="panel-body" id="mobileProfileArea"></div>
-      </section>
+        <section id="viewConta" class="view panel">
+          <div class="panel-head">
+            <div class="panel-kicker">Conta</div>
+            <div class="panel-title">Login e modo</div>
+            <div class="panel-subtitle">Faça login uma vez e continue usando por cliques.</div>
+          </div>
+          <div class="panel-body" id="mobileContaArea"></div>
+        </section>
+      </div>
     </main>
 
     <nav class="mobile-tabs">
-      <button class="tab-btn active" data-view="viewCenter">
+      <button class="tab-btn active" data-view="viewLobbies" type="button">
         <span class="tab-icon">☰</span>
-        <span>Principal</span>
+        <span>Lobbies</span>
       </button>
-      <button class="tab-btn" data-view="viewCreate">
+      <button class="tab-btn" data-view="viewCriar" type="button">
         <span class="tab-icon">＋</span>
         <span>Criar</span>
       </button>
-      <button class="tab-btn" data-view="viewProfile">
+      <button class="tab-btn" data-view="viewConta" type="button">
         <span class="tab-icon">◉</span>
-        <span>Perfil</span>
+        <span>Conta</span>
       </button>
     </nav>
   </div>
@@ -792,12 +747,12 @@
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbw9rB_3YUkOpdt_X3lZ_Qq8TlZ_NnsxiT9ynr6nOs4jpDJn_luEBrN1KeZqSvOGLuAf/exec";
     const REFRESH_MS = 3000;
-    const STORAGE_KEY = "codLobbyJogadorAtualMobile";
+    const STORAGE_KEY = "codLobbyJogadorAtualMobileV3";
 
     let bancoLobbies = [];
     let jogadorAtual = null;
     let acaoEmAndamento = false;
-    let abaLobbies = "formacao";
+    let mostrarFechados = false;
 
     function mostrarMensagem(texto, tipo = "info") {
       const box = document.getElementById("messageBox");
@@ -807,7 +762,6 @@
       if (tipo === "error") box.classList.add("message-error");
       if (tipo === "info") box.classList.add("message-info");
 
-      box.style.display = "block";
       box.textContent = texto;
 
       clearTimeout(window.__msgTimer);
@@ -855,6 +809,11 @@
       return expiresAt - Date.now();
     }
 
+    function initials(nome) {
+      const base = normalizarTexto(nome || "J");
+      return base.substring(0, 1).toUpperCase();
+    }
+
     function salvarSessaoJogador() {
       try {
         if (!jogadorAtual) {
@@ -863,7 +822,7 @@
         }
         localStorage.setItem(STORAGE_KEY, JSON.stringify(jogadorAtual));
       } catch (e) {
-        console.warn("Não foi possível salvar sessão local.", e);
+        console.warn("Erro ao salvar sessão local.", e);
       }
     }
 
@@ -871,7 +830,6 @@
       try {
         const bruto = localStorage.getItem(STORAGE_KEY);
         if (!bruto) return;
-
         const dados = JSON.parse(bruto);
         if (!dados || !dados.id || !dados.plataforma) return;
 
@@ -881,7 +839,7 @@
           tipoJogo: normalizarTexto(dados.tipoJogo || "")
         };
       } catch (e) {
-        console.warn("Não foi possível restaurar sessão.", e);
+        console.warn("Erro ao restaurar sessão.", e);
       }
     }
 
@@ -931,13 +889,19 @@
           ],
           max: 4
         }))
-        .filter(lobby => contarJogadoresValidos(lobby.players) > 0)
-        .filter(lobby => {
-          if (!jogadorAtual || !jogadorAtual.tipoJogo) return true;
-          const lobbyDoJogador = lobby.players.some(p => idsIguais(p.nome, jogadorAtual.id));
-          if (lobbyDoJogador) return true;
-          return normalizarTexto(lobby.modo) === normalizarTexto(jogadorAtual.tipoJogo);
-        });
+        .filter(lobby => contarJogadoresValidos(lobby.players) > 0);
+    }
+
+    async function carregarDadosPlanilha(exibirErro = true) {
+      try {
+        bancoLobbies = await fetchLobbies();
+        renderizarTudo();
+      } catch (erro) {
+        console.error("Erro ao puxar dados:", erro);
+        if (exibirErro) {
+          mostrarMensagem("Não foi possível carregar os lobbies.", "error");
+        }
+      }
     }
 
     function encontrarLobbyDoJogador() {
@@ -959,42 +923,35 @@
              (restante === null || restante > 0);
     }
 
-    function initials(nome) {
-      const base = normalizarTexto(nome || "J");
-      return base.substring(0, 1).toUpperCase();
+    function topbarTexto() {
+      if (!jogadorAtual) return "Visitante";
+      const lobbyAtual = encontrarLobbyDoJogador();
+      if (lobbyAtual) return `${jogadorAtual.id} • Lobby #${lobbyAtual.idLobby}`;
+      if (jogadorAtual.tipoJogo) return `${jogadorAtual.id} • ${jogadorAtual.tipoJogo}`;
+      return jogadorAtual.id;
     }
 
     function atualizarTopbar() {
-      const topbarStatus = document.getElementById("topbarStatus");
-      if (!jogadorAtual) {
-        topbarStatus.textContent = "Visitante";
-        return;
-      }
-      const textoModo = jogadorAtual.tipoJogo ? ` • ${jogadorAtual.tipoJogo}` : "";
-      topbarStatus.textContent = `${jogadorAtual.id}${textoModo}`;
+      document.getElementById("topbarStatus").textContent = topbarTexto();
     }
 
-    function estaEditandoFormulario() {
-      const el = document.activeElement;
-      if (!el) return false;
-      return ["INPUT", "SELECT", "TEXTAREA"].includes(el.tagName);
+    function irParaView(viewId) {
+      const tabs = document.querySelectorAll(".tab-btn");
+      const views = document.querySelectorAll(".view");
+
+      tabs.forEach(t => t.classList.remove("active"));
+      views.forEach(v => v.classList.remove("active"));
+
+      const targetView = document.getElementById(viewId);
+      const targetTab = document.querySelector(`.tab-btn[data-view="${viewId}"]`);
+
+      if (targetView) targetView.classList.add("active");
+      if (targetTab) targetTab.classList.add("active");
     }
 
-    async function carregarDadosPlanilha(exibirErro = true) {
-      try {
-        bancoLobbies = await fetchLobbies();
-        renderizarTudo();
-      } catch (erro) {
-        console.error("Erro ao puxar dados:", erro);
-        if (exibirErro) {
-          mostrarMensagem("Não foi possível carregar os lobbies.", "error");
-        }
-      }
-    }
-
-    function htmlLoginCard() {
+    function htmlContaDeslogado() {
       return `
-        <div class="hero">
+        <div class="hero-card">
           <h2>Entre uma vez e use por cliques</h2>
           <p>Seu ID da Activision fica salvo para as próximas visitas. Depois disso, tudo fica concentrado em poucos toques.</p>
         </div>
@@ -1002,13 +959,13 @@
         <div class="card stack">
           <div class="field">
             <label for="activisionId">ID da Activision</label>
-            <input class="input" type="text" id="activisionId" placeholder="Ex: joao#12345" />
+            <input class="input" type="text" id="activisionId" placeholder="Ex: joao#12345" autocomplete="off" autocapitalize="off" spellcheck="false" />
           </div>
 
           <div class="field">
             <label for="plataforma">Plataforma</label>
             <select class="select" id="plataforma">
-              <option value="" selected disabled>Selecione...</option>
+              <option value="">Selecione...</option>
               <option value="PC">PC</option>
               <option value="PlayStation">PlayStation</option>
               <option value="Xbox">Xbox</option>
@@ -1020,7 +977,7 @@
           <div class="field">
             <label for="tipoJogo">Modo inicial</label>
             <select class="select" id="tipoJogo">
-              <option value="" selected disabled>Selecione o modo...</option>
+              <option value="">Selecione o modo...</option>
               <option value="Battle Royale">Battle Royale</option>
               <option value="Ressurgência">Ressurgência</option>
               <option value="Casual Battle Royale">Casual Battle Royale</option>
@@ -1030,55 +987,62 @@
             </select>
           </div>
 
-          <button class="btn btn-primary" onclick="processarCadastro()">Entrar e buscar lobbies</button>
+          <button class="btn btn-primary" type="button" onclick="processarCadastro()">Entrar e buscar lobbies</button>
         </div>
       `;
     }
 
-    function htmlProfileArea() {
-      if (!jogadorAtual) {
-        return htmlLoginCard();
-      }
-
+    function htmlContaLogado() {
       const lobbyAtual = encontrarLobbyDoJogador();
 
       return `
-        <div class="profile-card">
-          <div class="identity">
-            <div class="avatar">${initials(jogadorAtual.id)}</div>
-            <div>
-              <h3>${jogadorAtual.id}</h3>
-              <p>${jogadorAtual.plataforma}${lobbyAtual ? " • Em lobby" : " • Livre"}</p>
-            </div>
+        <div class="quick-user">
+          <div class="avatar">${initials(jogadorAtual?.id)}</div>
+          <div>
+            <h3>${jogadorAtual?.id || "-"}</h3>
+            <p>${jogadorAtual?.plataforma || "-"}${lobbyAtual ? " • Em lobby" : " • Livre"}</p>
           </div>
-
-          <div class="info-grid">
-            <div class="info-row"><span>Modo atual</span><strong>${jogadorAtual.tipoJogo || "Não definido"}</strong></div>
-            <div class="info-row"><span>Status</span><strong>${lobbyAtual ? `Lobby #${lobbyAtual.idLobby}` : "Sem lobby ativo"}</strong></div>
-          </div>
-
-          ${lobbyAtual ? `
-            <div class="hint">Você está em um lobby. A troca de modo fica liberada somente depois de sair dele na área principal.</div>
-          ` : `
-            <div class="card stack">
-              <div class="field">
-                <label for="modoDepoisDeSair">Escolha outro modo</label>
-                <select class="select" id="modoDepoisDeSair">
-                  <option value="Battle Royale" ${jogadorAtual.tipoJogo === "Battle Royale" ? "selected" : ""}>Battle Royale</option>
-                  <option value="Ressurgência" ${jogadorAtual.tipoJogo === "Ressurgência" ? "selected" : ""}>Ressurgência</option>
-                  <option value="Casual Battle Royale" ${jogadorAtual.tipoJogo === "Casual Battle Royale" ? "selected" : ""}>Casual Battle Royale</option>
-                  <option value="Casual Ressurgência" ${jogadorAtual.tipoJogo === "Casual Ressurgência" ? "selected" : ""}>Casual Ressurgência</option>
-                  <option value="Ranked Play" ${jogadorAtual.tipoJogo === "Ranked Play" ? "selected" : ""}>Ranked Play</option>
-                  <option value="Multiplayer" ${jogadorAtual.tipoJogo === "Multiplayer" ? "selected" : ""}>Multiplayer</option>
-                </select>
-              </div>
-              <button class="btn btn-secondary" onclick="confirmarNovoModo()">Trocar modo</button>
-            </div>
-          `}
-
-          <button class="btn btn-danger" onclick="fazerLogout()">Sair desta conta</button>
         </div>
+
+        <div class="card stack">
+          <div class="info-grid">
+            <div class="info-line"><span>Modo atual</span><strong>${jogadorAtual?.tipoJogo || "Não definido"}</strong></div>
+            <div class="info-line"><span>Status</span><strong>${lobbyAtual ? `Lobby #${lobbyAtual.idLobby}` : "Sem lobby"}</strong></div>
+          </div>
+        </div>
+
+        <div class="spacer"></div>
+
+        ${lobbyAtual ? `
+          <div class="card">
+            <div class="hint">
+              Você está no lobby <strong>#${lobbyAtual.idLobby}</strong>. Saia dele antes de trocar o modo ou mudar de conta.
+            </div>
+          </div>
+        ` : `
+          <div class="card stack">
+            <div class="field">
+              <label for="modoDepoisDeSair">Escolha outro modo</label>
+              <select class="select" id="modoDepoisDeSair">
+                <option value="Battle Royale" ${jogadorAtual?.tipoJogo === "Battle Royale" ? "selected" : ""}>Battle Royale</option>
+                <option value="Ressurgência" ${jogadorAtual?.tipoJogo === "Ressurgência" ? "selected" : ""}>Ressurgência</option>
+                <option value="Casual Battle Royale" ${jogadorAtual?.tipoJogo === "Casual Battle Royale" ? "selected" : ""}>Casual Battle Royale</option>
+                <option value="Casual Ressurgência" ${jogadorAtual?.tipoJogo === "Casual Ressurgência" ? "selected" : ""}>Casual Ressurgência</option>
+                <option value="Ranked Play" ${jogadorAtual?.tipoJogo === "Ranked Play" ? "selected" : ""}>Ranked Play</option>
+                <option value="Multiplayer" ${jogadorAtual?.tipoJogo === "Multiplayer" ? "selected" : ""}>Multiplayer</option>
+              </select>
+            </div>
+            <button class="btn btn-secondary" type="button" onclick="confirmarNovoModo()">Buscar outro modo</button>
+          </div>
+        `}
+
+        <div class="spacer"></div>
+        <button class="btn btn-danger" type="button" onclick="fazerLogout()">Sair desta conta</button>
       `;
+    }
+
+    function htmlContaArea() {
+      return jogadorAtual ? htmlContaLogado() : htmlContaDeslogado();
     }
 
     function renderPlayerName(player, posicao) {
@@ -1125,10 +1089,10 @@
       }
 
       if (jogadorEhLider(lobby)) {
-        return `<div class="hint">Você é o líder deste lobby fechado. Abra o grupo/squad no jogo para os demais entrarem.</div>`;
+        return `<div class="hint">Você é o líder deste lobby fechado. Abra o grupo no jogo para os demais entrarem.</div>`;
       }
 
-      return `<div class="hint">Lobby fechado. Agora adicione o ID do líder <strong>${lider}</strong> para entrar na partida.</div>`;
+      return `<div class="hint">Lobby fechado. Agora adicione o ID do líder <strong>${lider}</strong> para entrar.</div>`;
     }
 
     function renderLobbyCard(lobby, index) {
@@ -1149,152 +1113,157 @@
       let botaoAcao = "";
       if (jogadorAtual) {
         if (esteEhOLobbyDoJogador) {
-          botaoAcao = `<button class="btn btn-danger" ${acaoEmAndamento ? "disabled" : ""} onclick="sairDoLobby(${index})">Sair do lobby</button>`;
+          botaoAcao = `<button class="btn btn-danger" type="button" ${acaoEmAndamento ? "disabled" : ""} onclick="sairDoLobby(${index})">Sair do lobby</button>`;
         } else if (!lobbyDoJogador && !lotado && lobbyValidoParaEntrar(lobby) && !acaoEmAndamento) {
-          botaoAcao = `<button class="btn btn-success" onclick="entrarNoLobby(${index})">Entrar no lobby</button>`;
+          botaoAcao = `<button class="btn btn-success" type="button" onclick="entrarNoLobby(${index})">Entrar no lobby</button>`;
         }
       }
 
       return `
-        <article class="lobby-card">
+        <article class="lobby-card ${esteEhOLobbyDoJogador ? "current" : ""}">
           <div class="lobby-head">
             <div>
-              <div class="lobby-title ${lotado ? "mode-closed" : "mode-open"}">${lobby.modo}</div>
+              <div class="lobby-mode ${lotado ? "mode-closed" : "mode-open"}">${lobby.modo}</div>
               <div class="meta">
                 <span class="badge">Lobby #${lobby.idLobby}</span>
                 <span class="badge">${totalPlayers}/4</span>
-                ${restante !== null ? `<span class="badge badge-yellow js-timer" data-lobby-id="${lobby.idLobby}">${lotado ? "Tempo restante" : "Expira em"}: ${formatarTempo(restante)}</span>` : ""}
+                ${restante !== null ? `<span class="badge badge-yellow">${lotado ? "Tempo restante" : "Expira em"}: ${formatarTempo(restante)}</span>` : ""}
               </div>
             </div>
           </div>
 
           <div class="players">${playersHtml}</div>
-
           ${renderizarAvisoLider(lobby, esteEhOLobbyDoJogador, lotado)}
-          ${botaoAcao ? `<div style="margin-top:12px;">${botaoAcao}</div>` : ""}
+          ${botaoAcao ? `<div class="spacer"></div>${botaoAcao}` : ""}
         </article>
       `;
     }
 
-    function htmlCurrentLobbyCard(lobbyAtual) {
-      const totalPlayers = contarJogadoresValidos(lobbyAtual.players);
-      const restante = obterTempoRestante(lobbyAtual);
-      let playersHtml = "";
-
-      for (let i = 0; i < 4; i++) {
-        const player = lobbyAtual.players[i] || { nome: "", plat: "" };
-        playersHtml += renderPlayerName(player, i + 1);
-      }
-
-      return `
-        <div class="current-lobby">
-          <div class="current-lobby-head">
-            <div>
-              <h3>Você está no Lobby #${lobbyAtual.idLobby}</h3>
-              <p>Essa é a sua área principal. Para evitar confusão, a ação de sair fica somente aqui.</p>
-              <div class="meta">
-                <span class="badge">${lobbyAtual.modo}</span>
-                <span class="badge">${totalPlayers}/4</span>
-                ${restante !== null ? `<span class="badge badge-yellow js-timer" data-lobby-id="${lobbyAtual.idLobby}">Expira em: ${formatarTempo(restante)}</span>` : ""}
-              </div>
-            </div>
-          </div>
-
-          <div class="players">${playersHtml}</div>
-
-          ${renderizarAvisoLider(lobbyAtual, true, totalPlayers >= lobbyAtual.max || lobbyAtual.status === "Fechado")}
-          <div style="margin-top:12px;">
-            <button class="btn btn-danger" ${acaoEmAndamento ? "disabled" : ""} onclick="sairDoLobbyPorAtual()">Sair do lobby</button>
-          </div>
-        </div>
-      `;
-    }
-
-    function htmlCenterArea() {
+    function htmlLobbiesArea() {
       const lobbyAtual = encontrarLobbyDoJogador();
 
-      const emFormacao = bancoLobbies.filter(lobby => {
+      const lobbiesAbertos = bancoLobbies.filter(lobby => {
         const totalPlayers = contarJogadoresValidos(lobby.players);
         const lotado = totalPlayers >= lobby.max || lobby.status === "Fechado";
         const restante = obterTempoRestante(lobby);
         if (restante !== null && restante <= 0) return false;
         if (lobbyAtual && lobby.idLobby === lobbyAtual.idLobby) return false;
+        if (jogadorAtual?.tipoJogo && normalizarTexto(lobby.modo) !== normalizarTexto(jogadorAtual.tipoJogo)) return false;
         return !lotado;
       });
 
-      const fechados = bancoLobbies.filter(lobby => {
+      const lobbiesFechados = bancoLobbies.filter(lobby => {
         const totalPlayers = contarJogadoresValidos(lobby.players);
         const lotado = totalPlayers >= lobby.max || lobby.status === "Fechado";
         const restante = obterTempoRestante(lobby);
         if (restante !== null && restante <= 0) return false;
-        if (lobbyAtual && lobby.idLobby === lobbyAtual.idLobby) return false;
+        if (jogadorAtual?.tipoJogo && normalizarTexto(lobby.modo) !== normalizarTexto(jogadorAtual.tipoJogo)) return false;
         return lotado;
       });
 
-      const listaAtual = abaLobbies === "formacao" ? emFormacao : fechados;
+      let blocoAtual = "";
+      if (jogadorAtual && lobbyAtual) {
+        const indexAtual = bancoLobbies.findIndex(l => l.idLobby === lobbyAtual.idLobby);
+        blocoAtual = `
+          <div class="section-title">
+            <div>
+              <h3>Seu lobby atual</h3>
+              <p>Ação principal visível logo no topo.</p>
+            </div>
+          </div>
+          ${renderLobbyCard(lobbyAtual, indexAtual)}
+          <div class="divider"></div>
+        `;
+      }
 
-      let htmlLista = "";
-      if (listaAtual.length === 0) {
-        htmlLista = `
-          <div class="empty-state">
-            <h3>${abaLobbies === "formacao" ? "Nada disponível agora" : "Nenhum lobby fechado"}</h3>
-            <p>${abaLobbies === "formacao"
-              ? "Nenhum lobby em formação apareceu para o modo atual."
-              : "Ainda não há squads fechados para mostrar."}</p>
+      let blocoBusca = "";
+      if (!jogadorAtual) {
+        blocoBusca = `
+          <div class="hero-card">
+            <h2>Sua fila rápida começa aqui</h2>
+            <p>Faça login na aba Conta para ativar o fluxo completo por cliques e buscar lobbies no modo desejado.</p>
           </div>
         `;
       } else {
-        htmlLista = listaAtual.map(lobby => {
+        blocoBusca = `
+          <div class="card stack" style="margin-bottom:16px;">
+            <div class="field">
+              <label for="modoVisualRapido">Modo atual de busca</label>
+              <select class="select" id="modoVisualRapido" onchange="trocaRapidaModo(this.value)">
+                <option value="Battle Royale" ${jogadorAtual.tipoJogo === "Battle Royale" ? "selected" : ""}>Battle Royale</option>
+                <option value="Ressurgência" ${jogadorAtual.tipoJogo === "Ressurgência" ? "selected" : ""}>Ressurgência</option>
+                <option value="Casual Battle Royale" ${jogadorAtual.tipoJogo === "Casual Battle Royale" ? "selected" : ""}>Casual Battle Royale</option>
+                <option value="Casual Ressurgência" ${jogadorAtual.tipoJogo === "Casual Ressurgência" ? "selected" : ""}>Casual Ressurgência</option>
+                <option value="Ranked Play" ${jogadorAtual.tipoJogo === "Ranked Play" ? "selected" : ""}>Ranked Play</option>
+                <option value="Multiplayer" ${jogadorAtual.tipoJogo === "Multiplayer" ? "selected" : ""}>Multiplayer</option>
+              </select>
+            </div>
+          </div>
+        `;
+      }
+
+      let listaAbertos = "";
+      if (lobbiesAbertos.length === 0) {
+        listaAbertos = `
+          <div class="empty-state">
+            <h3>Nada disponível agora</h3>
+            <p>${jogadorAtual ? "Nenhum lobby em formação apareceu para o modo atual." : "Faça login para começar a buscar por modo."}</p>
+          </div>
+        `;
+      } else {
+        listaAbertos = lobbiesAbertos.map(lobby => {
           const indiceReal = bancoLobbies.findIndex(item => item.idLobby === lobby.idLobby);
           return renderLobbyCard(lobby, indiceReal);
         }).join("");
       }
 
-      return `
-        <div class="primary-stage">
-          ${lobbyAtual ? htmlCurrentLobbyCard(lobbyAtual) : `
-            <div class="hero">
-              <h2>${jogadorAtual ? "Entre em um lobby ou crie o seu" : "Sua fila rápida começa aqui"}</h2>
-              <p>${jogadorAtual
-                ? "Escolha um lobby disponível abaixo ou vá no painel lateral para criar um novo como líder."
-                : "Faça seu login para ativar o fluxo completo por cliques."}</p>
+      let blocoFechados = "";
+      if (jogadorAtual || lobbiesFechados.length > 0) {
+        blocoFechados = `
+          <div class="divider"></div>
+          <div class="section-title">
+            <div>
+              <h3>Lobbies fechados</h3>
+              <p>Informação secundária.</p>
             </div>
-          `}
-
-          ${jogadorAtual ? `
-            <div class="card stack">
-              <div class="field">
-                <label for="modoVisualRapido">Modo atual de busca</label>
-                <select class="select" id="modoVisualRapido" onchange="trocaRapidaModo(this.value)">
-                  <option value="Battle Royale" ${jogadorAtual.tipoJogo === "Battle Royale" ? "selected" : ""}>Battle Royale</option>
-                  <option value="Ressurgência" ${jogadorAtual.tipoJogo === "Ressurgência" ? "selected" : ""}>Ressurgência</option>
-                  <option value="Casual Battle Royale" ${jogadorAtual.tipoJogo === "Casual Battle Royale" ? "selected" : ""}>Casual Battle Royale</option>
-                  <option value="Casual Ressurgência" ${jogadorAtual.tipoJogo === "Casual Ressurgência" ? "selected" : ""}>Casual Ressurgência</option>
-                  <option value="Ranked Play" ${jogadorAtual.tipoJogo === "Ranked Play" ? "selected" : ""}>Ranked Play</option>
-                  <option value="Multiplayer" ${jogadorAtual.tipoJogo === "Multiplayer" ? "selected" : ""}>Multiplayer</option>
-                </select>
-              </div>
-            </div>
-          ` : ""}
-
-          <div class="segmented">
-            <button class="${abaLobbies === "formacao" ? "active" : ""}" onclick="definirAbaLobbies('formacao')">Em formação</button>
-            <button class="${abaLobbies === "fechados" ? "active" : ""}" onclick="definirAbaLobbies('fechados')">Fechados</button>
+            <button class="btn btn-ghost" type="button" style="min-height:40px;padding:8px 12px;" onclick="alternarFechados()">
+              ${mostrarFechados ? "Ocultar" : "Ver fechados"}
+            </button>
           </div>
 
-          <div class="list">${htmlLista}</div>
+          ${mostrarFechados ? (
+            lobbiesFechados.length
+              ? `<div class="list">${lobbiesFechados.map(lobby => {
+                  const indiceReal = bancoLobbies.findIndex(item => item.idLobby === lobby.idLobby);
+                  return renderLobbyCard(lobby, indiceReal);
+                }).join("")}</div>`
+              : `<div class="empty-state"><h3>Nenhum fechado agora</h3><p>Quando um squad lotar, ele aparece aqui.</p></div>`
+          ) : `<p class="subtle">Os lobbies fechados ficam recolhidos para deixar a tela principal mais objetiva.</p>`}
+        `;
+      }
+
+      return `
+        ${blocoAtual}
+        ${blocoBusca}
+
+        <div class="section-title">
+          <div>
+            <h3>Lobbies em formação</h3>
+            <p>As vagas abertas que você pode entrar agora.</p>
+          </div>
         </div>
+
+        <div class="list">${listaAbertos}</div>
+        ${blocoFechados}
       `;
     }
 
-    function htmlCreateArea() {
+    function htmlCriarArea() {
       if (!jogadorAtual) {
         return `
-          <div class="aside-box">
-            <div class="aside-hero">
-              <h3>Ative o fluxo completo</h3>
-              <p>Entre com seu ID para liberar a criação de lobby, manter a conta salva e usar tudo em poucos cliques.</p>
-            </div>
+          <div class="hero-card">
+            <h2>Ative o fluxo completo</h2>
+            <p>Entre com seu ID na aba Conta para liberar a criação de lobby, manter a conta salva e usar tudo em poucos cliques.</p>
           </div>
         `;
       }
@@ -1303,111 +1272,96 @@
 
       if (lobbyAtual) {
         return `
-          <div class="aside-box">
-            <div class="aside-hero">
-              <h3>Você já está em um lobby</h3>
-              <p>Este painel fica propositalmente simples. A ação de sair aparece somente na área principal.</p>
+          <div class="card stack">
+            <div class="hint hint-blue">
+              Você já está no lobby <strong>#${lobbyAtual.idLobby}</strong>. Saia dele antes de criar outro.
             </div>
-
-            <div class="hint">
-              Lobby atual: <strong>#${lobbyAtual.idLobby}</strong>. Depois de sair, este painel volta a mostrar a criação.
-            </div>
+            <button class="btn btn-danger" type="button" ${acaoEmAndamento ? "disabled" : ""} onclick="sairDoLobbyPorAtual()">Sair do lobby atual</button>
           </div>
         `;
       }
 
       return `
-        <div class="aside-box">
-          <div class="aside-hero">
-            <h3>Criar lobby como líder</h3>
-            <p>Seu modo atual é <strong>${jogadorAtual.tipoJogo || "não definido"}</strong>. Se não existir uma formação ideal, abra a sua.</p>
+        <div class="hero-card">
+          <h2>Criar lobby no modo atual</h2>
+          <p>Seu modo selecionado agora é <strong>${jogadorAtual.tipoJogo || "não definido"}</strong>. Se não existir uma mesa ideal, você pode abrir a sua e virar líder.</p>
+        </div>
+
+        <div class="card stack">
+          <div class="info-grid">
+            <div class="info-line"><span>Jogador</span><strong>${jogadorAtual.id}</strong></div>
+            <div class="info-line"><span>Plataforma</span><strong>${jogadorAtual.plataforma}</strong></div>
+            <div class="info-line"><span>Modo</span><strong>${jogadorAtual.tipoJogo || "Escolha um modo"}</strong></div>
           </div>
 
-          <div class="card stack">
-            <div class="info-grid">
-              <div class="info-row"><span>Jogador</span><strong>${jogadorAtual.id}</strong></div>
-              <div class="info-row"><span>Plataforma</span><strong>${jogadorAtual.plataforma}</strong></div>
-              <div class="info-row"><span>Modo</span><strong>${jogadorAtual.tipoJogo || "-"}</strong></div>
-            </div>
-
-            <button class="btn btn-success" ${acaoEmAndamento ? "disabled" : ""} onclick="criarNovoLobbyComoLider()">
-              ${acaoEmAndamento ? "Criando..." : "Criar novo lobby"}
-            </button>
-          </div>
+          <button class="btn btn-success" type="button" ${acaoEmAndamento ? "disabled" : ""} onclick="criarNovoLobbyComoLider()">
+            ${acaoEmAndamento ? "Criando..." : "Criar novo lobby"}
+          </button>
         </div>
       `;
     }
 
     function renderizarTudo() {
-      if (estaEditandoFormulario()) return;
-
       atualizarTopbar();
 
-      const profileHtml = htmlProfileArea();
-      const centerHtml = htmlCenterArea();
-      const createHtml = htmlCreateArea();
+      const contaHtml = htmlContaArea();
+      const lobbiesHtml = htmlLobbiesArea();
+      const criarHtml = htmlCriarArea();
 
-      const desktopProfileArea = document.getElementById("desktopProfileArea");
-      const desktopCenterArea = document.getElementById("desktopCenterArea");
-      const desktopCreateArea = document.getElementById("desktopCreateArea");
-      const mobileProfileArea = document.getElementById("mobileProfileArea");
-      const mobileCenterArea = document.getElementById("mobileCenterArea");
-      const mobileCreateArea = document.getElementById("mobileCreateArea");
+      const desktopContaArea = document.getElementById("desktopContaArea");
+      const desktopLobbiesArea = document.getElementById("desktopLobbiesArea");
+      const desktopCriarArea = document.getElementById("desktopCriarArea");
+      const mobileContaArea = document.getElementById("mobileContaArea");
+      const mobileLobbiesArea = document.getElementById("mobileLobbiesArea");
+      const mobileCriarArea = document.getElementById("mobileCriarArea");
 
-      if (desktopProfileArea) desktopProfileArea.innerHTML = profileHtml;
-      if (desktopCenterArea) desktopCenterArea.innerHTML = centerHtml;
-      if (desktopCreateArea) desktopCreateArea.innerHTML = createHtml;
-      if (mobileProfileArea) mobileProfileArea.innerHTML = profileHtml;
-      if (mobileCenterArea) mobileCenterArea.innerHTML = centerHtml;
-      if (mobileCreateArea) mobileCreateArea.innerHTML = createHtml;
+      if (desktopContaArea) desktopContaArea.innerHTML = contaHtml;
+      if (desktopLobbiesArea) desktopLobbiesArea.innerHTML = lobbiesHtml;
+      if (desktopCriarArea) desktopCriarArea.innerHTML = criarHtml;
+
+      if (mobileContaArea) mobileContaArea.innerHTML = contaHtml;
+      if (mobileLobbiesArea) mobileLobbiesArea.innerHTML = lobbiesHtml;
+      if (mobileCriarArea) mobileCriarArea.innerHTML = criarHtml;
     }
 
-    function atualizarTimersVisuais() {
-      document.querySelectorAll(".js-timer").forEach(el => {
-        const lobbyId = Number(el.dataset.lobbyId);
-        const lobby = bancoLobbies.find(l => Number(l.idLobby) === lobbyId);
-        if (!lobby) return;
-
-        const restante = obterTempoRestante(lobby);
-        const totalPlayers = contarJogadoresValidos(lobby.players);
-        const lotado = totalPlayers >= lobby.max || lobby.status === "Fechado";
-
-        if (restante !== null && restante <= 0) {
-          el.textContent = lotado ? "Tempo restante: 00:00" : "Expira em: 00:00";
-          return;
-        }
-
-        if (restante !== null) {
-          el.textContent = `${lotado ? "Tempo restante" : "Expira em"}: ${formatarTempo(restante)}`;
-        }
-      });
-    }
-
-    function definirAbaLobbies(aba) {
-      abaLobbies = aba;
+    function alternarFechados() {
+      mostrarFechados = !mostrarFechados;
       renderizarTudo();
     }
 
     function processarCadastro() {
-      const activisionId = normalizarTexto(document.getElementById("activisionId")?.value);
-      const plataforma = normalizarTexto(document.getElementById("plataforma")?.value);
-      const tipoJogo = normalizarTexto(document.getElementById("tipoJogo")?.value);
+      const activisionInput = document.getElementById("activisionId");
+      const plataformaSelect = document.getElementById("plataforma");
+      const tipoJogoSelect = document.getElementById("tipoJogo");
 
-      if (!activisionId || !plataforma || !tipoJogo) {
-        mostrarMensagem("Preencha todos os campos antes de continuar.", "error");
+      const activisionId = normalizarTexto(activisionInput?.value);
+      const plataforma = normalizarTexto(plataformaSelect?.value);
+      const tipoJogo = normalizarTexto(tipoJogoSelect?.value);
+
+      if (!activisionId) {
+        mostrarMensagem("Digite seu ID da Activision para continuar.", "error");
+        activisionInput?.focus();
         return;
       }
 
-      jogadorAtual = {
-        id: activisionId,
-        plataforma,
-        tipoJogo
-      };
+      if (!plataforma) {
+        mostrarMensagem("Selecione sua plataforma antes de continuar.", "error");
+        plataformaSelect?.focus();
+        return;
+      }
 
+      if (!tipoJogo) {
+        mostrarMensagem("Selecione o modo inicial antes de continuar.", "error");
+        tipoJogoSelect?.focus();
+        return;
+      }
+
+      jogadorAtual = { id: activisionId, plataforma, tipoJogo };
       salvarSessaoJogador();
       renderizarTudo();
       carregarDadosPlanilha(false);
-      mostrarMensagem("Cadastro concluído. Agora você pode usar o sistema só por cliques.", "success");
+      irParaView("viewLobbies");
+      mostrarMensagem("Login concluído. Agora você pode entrar em um lobby ou criar o seu.", "success");
     }
 
     function fazerLogout() {
@@ -1420,6 +1374,7 @@
       jogadorAtual = null;
       salvarSessaoJogador();
       renderizarTudo();
+      irParaView("viewConta");
       mostrarMensagem("Você saiu da conta atual.", "info");
     }
 
@@ -1444,9 +1399,9 @@
 
       jogadorAtual.tipoJogo = novoModo;
       salvarSessaoJogador();
-      abaLobbies = "formacao";
       renderizarTudo();
       carregarDadosPlanilha(false);
+      irParaView("viewLobbies");
       mostrarMensagem(`Modo alterado para ${novoModo}.`, "success");
     }
 
@@ -1461,10 +1416,9 @@
 
       jogadorAtual.tipoJogo = normalizarTexto(novoModo);
       salvarSessaoJogador();
-      abaLobbies = "formacao";
       renderizarTudo();
       carregarDadosPlanilha(false);
-      mostrarMensagem(`Busca rápida alterada para ${jogadorAtual.tipoJogo}.`, "info");
+      mostrarMensagem(`Busca alterada para ${jogadorAtual.tipoJogo}.`, "info");
     }
 
     async function criarNovoLobbyComoLider() {
@@ -1499,6 +1453,7 @@
         }
 
         await carregarDadosPlanilha(false);
+        irParaView("viewLobbies");
         mostrarMensagem(`Novo lobby criado em ${jogadorAtual.tipoJogo}. Você virou o líder da formação.`, "success");
       } catch (erro) {
         console.error("Erro ao criar lobby:", erro);
@@ -1514,7 +1469,8 @@
 
       try {
         if (!jogadorAtual) {
-          mostrarMensagem("Faça seu cadastro primeiro.", "error");
+          mostrarMensagem("Faça login na aba Conta antes de entrar em um lobby.", "error");
+          irParaView("viewConta");
           return;
         }
 
@@ -1612,15 +1568,9 @@
 
     function configurarTabsMobile() {
       const tabs = document.querySelectorAll(".tab-btn");
-      const views = document.querySelectorAll(".mobile-view");
-
       tabs.forEach(tab => {
         tab.addEventListener("click", () => {
-          const alvo = tab.dataset.view;
-          tabs.forEach(t => t.classList.remove("active"));
-          views.forEach(v => v.classList.remove("active"));
-          tab.classList.add("active");
-          document.getElementById(alvo)?.classList.add("active");
+          irParaView(tab.dataset.view);
         });
       });
     }
@@ -1629,19 +1579,20 @@
       restaurarSessaoJogador();
       configurarTabsMobile();
       renderizarTudo();
+
+      if (jogadorAtual) {
+        irParaView("viewLobbies");
+      } else {
+        irParaView("viewConta");
+      }
+
       await carregarDadosPlanilha(false);
     }
 
     iniciarAplicacao();
 
-    setInterval(() => {
-      atualizarTimersVisuais();
-    }, 1000);
-
     setInterval(async () => {
-      if (!estaEditandoFormulario()) {
-        await carregarDadosPlanilha(false);
-      }
+      await carregarDadosPlanilha(false);
     }, REFRESH_MS);
   </script>
 </body>
